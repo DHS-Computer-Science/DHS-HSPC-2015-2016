@@ -16,7 +16,7 @@
 - The computer running this program will have accounts for all the teams
   - rsync/scp can be used to transfer the submission packets
 - Packets will be zips
-  - name must be in format "<team id>_<submission no.>"
+  - name must be in format `<team id>_<submission no.>`
     - team id will be a number
     - submission number should be stored by the submission program, starts at 1
   - must contain info file

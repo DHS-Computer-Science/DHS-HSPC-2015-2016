@@ -1,6 +1,8 @@
 # Submission Package
-- Name should be in the format "<team id>_<submission #>.zip"
+- Name should be in the format `<team id>_<submission no.>`
+  - see .zip file in this directory as a sample
 - This README is not part of the package(It should not be included)
+- The .zip in this directory is also a sample
 - This package should be zipped during transfer
   - This one is unzipped to make it easier to view/reference
 
