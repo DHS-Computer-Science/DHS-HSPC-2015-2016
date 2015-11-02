@@ -35,7 +35,11 @@
         <th>Complete</th>
         <th>Total Time</th>
 <?php
-  for ($i=1; $i<=5; $i++) {
+  $number_of_problems = 9;
+  $size_of_name       = 40;
+  $size_of_data       = 4;
+  $record_size        = $size_of_name + 2*$size_of_data*$number_of_problems;
+  for ($i=1; $i<=$number_of_problems; $i++) {
     echo "        <th colspan = \"2\">Problem ".$i."</th>\n";
   }
 ?>
@@ -43,43 +47,64 @@
       <tr>
         <th colspan = "3"></th>
 <?php
-  for ($i=1; $i<=5; $i++) {
+  for ($i=1; $i<=$number_of_problems; $i++) {
     echo "        <th>Attempts</th>\n";
     echo "        <th>Time</th>\n";
   }
 ?>
       </tr>
 <?php
-  $handle = fopen("/home/az/Git/DHS-HSPC/Scoreboard/sample.scores", "r");
+  $handle = fopen("/home/az/Git/DHS-HSPC/Scoreboard/scores.db", "rb");
+  $read = 0;
   if ($handle) {
-  while (($line = fgets($handle)) !== false) {
-    $parts      = split('=\|=', rtrim($line, "\n"));
-    $total_time = strtotime("00:00:00");
-    $complete   = 0;
-    
-    echo "      <tr>\n";
-    echo "        <td>".$parts[0]."</td>\n";
-    
-    for($i=2; $i<count($parts); $i+=2) {
-      $time       =  strtotime($parts[$i]);
-      $total_time += $time - strtotime("00:00:00");
-      if($time > strtotime("00:00:00"))
-        $complete++;
+    while (!feof($handle)) {
+      $data       = fread($handle, $size_of_name);
+      $parts      = unpack("c*", $data);
+      echo "      <tr>\n";
+      echo "        <td>";
+      for($i=1; $parts[$i] != 0; $i++) {
+        if ($parts[$i] >= 32) echo chr($parts[$i]);
+      }
+      echo "</td>\n";
+      echo "      </tr>\n";
+      /*
+      for($i=0; $i<$number_of_problems; $i++) {
+        $data       = fread($handle, $size_of_name);
+        $parts      = unpack("aname", $data);
+      }
+      /*
+      $parts      = unpack("aname/n".(2*$number_of_problems)."data", $data);
+      print_r($parts);
+      $total_time = strtotime("00:00:00");
+      $complete   = 0;
       
+      echo "      <tr>\n";
+      echo "        <td>".$parts[0]."</td>\n";
+      
+      for($i=2; $i<count($parts); $i+=2) {
+        $time       =  strtotime($parts[$i]);
+        $total_time += $time - strtotime("00:00:00");
+        if($time > strtotime("00:00:00")) $complete++;
+        
+      }
+      echo "        <td>".$complete."</td>\n";
+      echo "        <td>".date("H:i:s", $total_time)."</td>\n";
+      
+      for($i=1; $i<count($parts); $i+=2) {
+        echo "        <td>".$parts[$i]."</td>\n";
+        echo "        <td>".$parts[$i+1]."</td>\n";
+      }
+      echo "      </tr>\n";
+      fseek($handle, $record_size*(++$count));
+      */
     }
-    echo "        <td>".$complete."</td>\n";
-    echo "        <td>".date("H:i:s", $total_time)."</td>\n";
-    
-    for($i=1; $i<count($parts); $i+=2) {
-      echo "        <td>".$parts[$i]."</td>\n";
-      echo "        <td>".$parts[$i+1]."</td>\n";
-    }
-  }
 
-  fclose($handle);
+    fclose($handle);
   }
   else {
-    echo "<td> No scores found<td<>\n";
+    echo "      <tr>\n";
+    echo "        <td colspan = \"".(3+2*$number_of_problems)."\"> No scores found</td>\n";
+    echo "      </tr>\n";
   } 
 ?>
     </table>
