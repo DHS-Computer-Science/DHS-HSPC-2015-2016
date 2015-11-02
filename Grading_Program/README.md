@@ -27,3 +27,10 @@
     - if there are more, only the first such class will be run
   - *may* contain .class files
     - these will be ignored
+- Score board creation
+  - since this program willl track if an assignmet is complete, it will also do scoreboard managment
+  - tracking of scores will be done in a file(from which database will be read)
+  - sorting will be done(by this program) when scores are writen
+  - reading before computation
+    - number of attempt will need to be read, as they are not stored by the program
+    - other entries will need to be read for sorting purposes
