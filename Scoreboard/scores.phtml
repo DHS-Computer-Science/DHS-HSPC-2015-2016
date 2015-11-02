@@ -60,7 +60,7 @@
     
     for($i=2; $i<count($parts); $i+=2) {
       $time       =  strtotime($parts[$i]);
-      $total_time += $time;
+      $total_time += $time - strtotime("00:00:00");
       if($time > strtotime("00:00:00"))
         $complete++;
       
