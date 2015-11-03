@@ -16,7 +16,7 @@
 Make sure that these things are intalled/working on the machine running the grader:
 - python3
 - watchdog(python modual use pip to install)
-- sqlite3(standard python me thinks, but just in case...)
+- [mysql](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html "documentation")(standard python me thinks, but just in case...)
 
 ## Additional Toughts
 - The computer running this program will have accounts for all the teams
