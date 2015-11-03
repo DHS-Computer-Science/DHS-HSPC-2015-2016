@@ -25,4 +25,4 @@ class ThreadGrade(threading.Thread):
 
 while True:
   #TODO - add submissions to queue
-  #queue.put(...) #wait... what is it exactly that get put here? #TODO
+  #queue.put(<path to zip>) #TODO - attach path to zip 
