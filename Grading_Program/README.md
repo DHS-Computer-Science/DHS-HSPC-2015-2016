@@ -12,6 +12,12 @@
 - Will use a queueing system
   - so that the test of submissions will not interfere with each other
 
+## Setup/Installation
+Make sure that these things are intalled/working on the machine running the grader:
+- python3
+- watchdog(python modual use pip to install)
+- sqlite3(standard python me thinks, but just in case...)
+
 ## Additional Toughts
 - The computer running this program will have accounts for all the teams
   - rsync/scp can be used to transfer the submission packets
