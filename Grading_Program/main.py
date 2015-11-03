@@ -1,6 +1,7 @@
 import queue
-import grader
-import threading
+import Grader
+import ThreadGrader
+import SubmissionWatcher
 
 q = queue.Queue()
 
