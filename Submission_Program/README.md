@@ -20,5 +20,23 @@
 - recive notifications from grading server
   - TODO(tell Grading Program contributors how you want this done)
 
+## MySQL Configuration
+  - [Download and install MySQL Workbench](http://dev.mysql.com/downloads/file/?id=459897)
+    - The installer now includes a MySQL server alongside with it. Choose all of the default options when downloading and installing this.
+  - Create a new database
+  - Create a new schema in the database, name it "hspc"
+  - Add a new table named "teams"
+  - Add 3 columns to the "teams" table
+	- id INT(10)
+	  - Primary Key
+	  - Not Null
+	  - Unique
+	  - Unsigned
+	  - Auto Increment
+	- team_name VARCHAR(256)
+	  - Default/Expression: NULL
+	- team_pass VARCHAR(256)
+	  - Default/Expression: NULL
+  
 ## Additional Toughts
 - TODO
