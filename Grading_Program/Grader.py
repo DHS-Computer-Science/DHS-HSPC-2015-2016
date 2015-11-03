@@ -27,7 +27,7 @@ class Grader:
     tester = subprocess.Popen(mycmd, stdin=infile, stdout=outfile)
     while p.poll() is None:
       time.sleep(1)
-    return tester.returncode == 0:
+    return tester.returncode == 0
   
   def extract_info(self):
     #TODO - create tmp folder and extract zip(excluding *.class files)
