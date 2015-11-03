@@ -1,7 +1,7 @@
-# Scoreboard
+# Submission Program
 
 ## Contributors
-- NONE
+- Noah Davis
 
 ## Specification
 - Login at start
