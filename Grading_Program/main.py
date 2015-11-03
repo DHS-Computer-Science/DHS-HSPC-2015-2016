@@ -1,23 +1,33 @@
-import sys
 import time
 import queue
-import Grader
-import argparse
-import ThreadGrader
-import SubmissionWatcher
+import datetime
+from Grader import Grader
+from ThreadGrader import ThreadGrader
+from SubmissionWatcher import SubmissionWatcher
+from watchdog.observers import Observer
 
-#read arguments from command line
-parser = argparse.ArgumentParser(description=__doc__)
-parser  .add_argument('submission_dir',   nargs='?', default='.',         help='directory to watch for submissions')
-parser  .add_argument('-t', '--duration',            default='04:00',     help='duration of cometition, format HH:MM')
-parser  .add_argument('-s', '--url',                 default='localhost', help='url of mysql server')
-parser  .add_argument('-u', '--username',            default='root',      help='username to mysql server')
-parser  .add_argument('-p', '--password',            default='password',  help='password to mysql server')
-parser  .add_argument('-d', '--database',            default='teams',     help='database to connect to(of the mysql server)')
-                                            #TODO change teams ^ to the value that should be used
-                                            #TODO add a config_file argument
-args   = parser.parse_args()
+def main(args):
+  #establish compitition start time
+  start_time = time.time()
+  end_time   = datetime.timedelta(hours=int(args.duration.partition(':')[0]),
+                                  minutes=int(args.duration.partition(':')[2])).total_seconds() + start_time
+  #create a queue
+  q = queue.Queue()
 
-q = queue.Queue()
-
-#TODO create watcher and grader objects/threads/whatevers
+  #file watcher
+  observer = Observer()
+  observer.schedule(SubmissionWatcher(), path=args.submission_dir)
+  observer.start()
+  
+  #grader manager
+  grade_manager = ThreadGrader(q) #create
+  grade_manager.setDaemon(True)   #do not exit until all things needed to be graded are graded
+  grade_manager.start()
+  
+  #wait until end of compitition
+  while time.time() < end_time:
+    time.sleep(1)
+  
+  #end watchdog
+  observer.stop()
+  observer.join()
