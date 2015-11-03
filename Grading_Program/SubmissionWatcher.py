@@ -1,10 +1,14 @@
-import time  
+import time
+import shutil
 from watchdog.events import PatternMatchingEventHandler 
 
 class SubmissionWatcher(PatternMatchingEventHandler):
   patterns = ["*.zip"]
-
+  staging_dir = tempfile.mkdtemp(prefix='grader_staging_')
+  
   def on_created(self, event):
     self.process(event)
-    #TODO - add submissions to queue
-    #queue.put(<path to zip>) #TODO - attach path to zip 
+    path_name = os.path.join(staging_dir, os.path.basename(event.src_path))
+    
+    shutil.move(event.src_path, path_name)
+    queue.put(path_name)
