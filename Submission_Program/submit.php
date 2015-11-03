@@ -1,4 +1,8 @@
 <?php
+if (!isset($_FILES["submission"])) {
+	header("Location: index.php");
+}
+
 $target_dir = "C:/xampp/submissions/";
 $target_file = $target_dir . basename($_FILES["submission"]["name"]); // File name needs to be assigned here. This needs configuration
 $uploadOk = 1;
@@ -33,5 +37,5 @@ if ($uploadOk == 0) {
     }
 }
 
-//header("Location: index.php");
+header("Location: index.php");
 ?>
