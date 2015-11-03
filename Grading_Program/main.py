@@ -6,7 +6,7 @@ import ThreadGrader
 import SubmissionWatcher
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser  .add_argument('sbumission_dir',   nargs='?', default='.',         help='directory to watch for submissions')
+parser  .add_argument('submission_dir',   nargs='?', default='.',         help='directory to watch for submissions')
 parser  .add_argument('-s', '--url',                 default='localhost', help='url of mysql server')
 parser  .add_argument('-u', '--username',            default='root',      help='username to mysql server')
 parser  .add_argument('-p', '--password',            default='password',  help='password to mysql server')
