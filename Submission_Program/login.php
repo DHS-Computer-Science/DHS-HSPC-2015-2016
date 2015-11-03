@@ -82,7 +82,7 @@ echo $salt."|".$hash;
 			</div>
 		</div>
 		<div id="content" style="display: inline-block; text-align: center;">
-			<div id="login">
+			<div id="small">
 				<h4 class="text"> Login </h4>
 				<hr>
 				<?php
