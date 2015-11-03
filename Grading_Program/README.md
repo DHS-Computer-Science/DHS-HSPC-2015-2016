@@ -12,6 +12,23 @@
 - Will use a queueing system
   - so that the test of submissions will not interfere with each other
 
+## Problems
+The grader will need both input and output files for testing purposes.
+Here is a partial tree of the proposed directory structure:
+
+**Problems**/
+├── **1**/
+│   ├── input
+│   └── output
+├── **2**/
+│   ├── input
+│   └── output
+├── **3**/
+│   ├── input
+│   └── output
+...
+
+
 ## Additional Toughts
 - The computer running this program will have accounts for all the teams
   - rsync/scp can be used to transfer the submission packets
