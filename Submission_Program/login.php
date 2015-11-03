@@ -4,11 +4,22 @@ if (isset($_POST["teamname"]) && isset($_POST["password"]) && isset($_GET["actio
 	$teamname = $_POST["teamname"];
 	$password = $_POST["password"];
 	$action = $_GET["action"];
-
-	include("connections.php");
 	
 	if (strcasecmp($action, "login") == 0) {
 		// Perform login attempt
+		
+		// Connection variables
+		$servername = "localhost";
+		$connusername = "root";
+		$connpassword = "password";
+
+		// Create connection
+		$conn = new mysqli($servername, $connusername, $connpassword, "hspc");
+
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		} 
 
 		// The query
 		$sql = "SELECT * FROM teams WHERE team_name='$teamname'";
