@@ -36,6 +36,4 @@ if ($uploadOk == 0) {
         header("Location: submissions.php?code=2");
     }
 }
-
-header("Location: index.php");
 ?>
