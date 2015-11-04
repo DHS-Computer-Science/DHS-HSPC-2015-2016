@@ -1,5 +1,6 @@
 import time
 import shutil
+import tempfile
 from watchdog.events import PatternMatchingEventHandler 
 
 class SubmissionWatcher(PatternMatchingEventHandler):

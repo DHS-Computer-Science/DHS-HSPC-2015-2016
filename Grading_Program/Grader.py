@@ -15,8 +15,6 @@ class Grader:
     #the java file which will be run    
     self.main_class  = ''
     
-    extract_info()
-  
   '''
   outputs:
     True:  compiled
@@ -43,6 +41,8 @@ class Grader:
     self.test_output = self.test_output.format(num=problem_number)
     self.test_input  = self.test_input.format(num=problem_number)
     
+    #TODO - should return team ID and problem #
+    return (1, 1)
   
   '''
   outputs:

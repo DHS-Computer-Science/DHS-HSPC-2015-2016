@@ -69,7 +69,7 @@ def main(args):
   observer.start()
   
   #grader manager
-  grade_manager = ThreadGrader(q) #create
+  grade_manager = ThreadGrader(q, cnx) #create
   grade_manager.setDaemon(True)   #do not exit until all things needed to be graded are graded
   grade_manager.start()
   
