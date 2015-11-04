@@ -22,9 +22,17 @@ class ThreadGrader(threading.Thread):
       
       #Select row of team_id
       #TODO - Change foo to correct table
-      cursor.execute("SELECT * FROM foo WHERE team_id = %d", (info[0]))
+      cursor.execute("SELECT * FROM %s WHERE team_id = %d", ('foo', info[0]))
       row = cursor.fetchone() #TODO - figure out what 'row' is
                               #  current assumpion - dictionary
+      
+      attempt = row['attempts'] #TODO- get the correct number
+      
+      if not submission.compile():
+        #TODO - send back the feedback(compile failed)
+        return #TODO archive this submission instead of ending this procces
+      
+      result = submission.run() #TODO use the result for something
       
       #TODO - updates results?   maybe in another thread/queue or program
       #TODO - send back results? maybe in another thread/queue or program
