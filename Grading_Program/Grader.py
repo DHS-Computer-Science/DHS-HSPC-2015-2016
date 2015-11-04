@@ -45,10 +45,13 @@ class Grader:
   def extract_info(self):
     self.outfile = self.submission_dir+'.output'
     
-    #TODO find main class(search for "void\s+main(String")
-    #  Note: this is the file name not class name
-    #  so "Main.java" NOT "Main"
-    #  TODO - raise exception if no class is found
+    #find main java file
+    #TODO - complain in no main was found
+    for root, dirs, files in os.walk(self.submission_dir):
+      for file in fnmatch.filter(files, '*.java'):
+        with open(os.path.join(root, file), 'r') as f:
+          if 'void main(String' in f.read():
+            self.main_class = os.path.join(root, file)
     
     #TODO figure out problem number
     problem_number   = 4 #place holder
