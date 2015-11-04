@@ -43,8 +43,7 @@ class Grader:
     return tester.returncode == 0
   
   def extract_info(self):
-    #TODO - create tmp folder and extract zip(excluding *.class files)
-    self.outfile  = '' #TODO
+    self.outfile = self.submission_dir+'.output'
     
     #TODO find main class(search for "void\s+main(String")
     #  Note: this is the file name not class name
