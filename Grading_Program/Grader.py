@@ -1,6 +1,8 @@
 import subprocess
+import tempfile
 import zipfile
 import filecmp
+import fnmatch
 import os
 
 class Grader:
@@ -11,7 +13,20 @@ class Grader:
     self.test_input  = 'problems/{num}/input'
     #the file where the output will be writen
     self.outfile     = ''
-
+    
+    #location to extract to
+    self.submission_dir = tempfile.mkdtemp(prefix='grader_staging_')
+    
+    #extract files
+    archexract = zipfile.ZipFile(path_to_zip)
+    archexract.extractall(self.submission_dir)
+    archexract.close()
+    
+    #remove .class files
+    for root, dirs, files in os.walk(sefl.submission_dir):
+      for file in fnmatch.filter(files, '*.class'):
+        os.remove(os.path.join(root, file))
+    
     #the java file which will be run    
     self.main_class  = ''
     
