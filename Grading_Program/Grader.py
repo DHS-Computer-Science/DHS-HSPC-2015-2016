@@ -22,7 +22,7 @@ class Grader:
   '''
   def compile(self):
     mycmd = ['javac', self.main_class]
-    tester = subprocess.Popen(mycmd, stdin=infile, stdout=outfile)
+    tester = subprocess.Popen(mycmd)
     while p.poll() is None:
       time.sleep(1)
     return tester.returncode == 0
