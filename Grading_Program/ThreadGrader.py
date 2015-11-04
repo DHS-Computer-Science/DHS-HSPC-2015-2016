@@ -1,5 +1,6 @@
 import queue
 import threading
+import mysql.connector
 
 class ThreadGrader(threading.Thread):
   """Threaded Url Grab"""
