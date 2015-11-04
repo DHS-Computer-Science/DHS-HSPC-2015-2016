@@ -53,13 +53,18 @@ class Grader:
           if 'void main(String' in f.read():
             self.main_class = os.path.join(root, file)
     
-    #TODO figure out problem number
-    problem_number   = 4 #place holder
+    problem_number = -1 #place holder for errors
+    team_id        = -1 #place holder for errors
+    
+    #using regex to parse XML - TODO maybe use an actual parser?
+    with open('{}/info.xml'.format(self.submission_dir), 'r') as f:
+      match = re.search('<team_id>(\\d+)</team_id>.*?<problem>(\\d+)</problem>', f.read(), re.I|re.DOTALL)
+      team_id        = int(match.group(1))
+      problem_number = int(match.group(2))
     self.test_output = self.test_output.format(num=problem_number)
     self.test_input  = self.test_input.format(num=problem_number)
     
-    #TODO - should return team ID and problem #
-    return (1, 1)
+    return (team_id, problem_number)
   
   '''
   outputs:
