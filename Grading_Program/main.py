@@ -25,7 +25,7 @@ def main(args):
   grade_manager.start()
   
   #wait until end of compitition
-  while time.time() < end_time:
+  while time.time() <= end_time + 50: #give 50 second leeway
     time.sleep(1)
   
   #end watchdog
