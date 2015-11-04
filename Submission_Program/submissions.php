@@ -55,6 +55,8 @@ $conn->close();
 		<div id="content" style="display: inline-block; text-align: center;">
 			<br>
 			<div id="small">
+				<h5 class="text">Problem Submissions</h5>
+				<hr>
 				<?php
 					if (isset($_GET["code"])) {
 						$code = $_GET["code"];
@@ -74,8 +76,19 @@ $conn->close();
 					}
 				?>
 				<form action="submit.php" method="post" enctype="multipart/form-data">
-					<input type="file" name="submission" id="submission" class="noborder text">
+					<input type="file" name="submission" id="submission" class="noborder text" required>
 					<br>
+					<select name="problemNumber" style="width:100%; margin-top:8px; margin-bottom:8px; padding:8px;">
+						<option value="0" selected disabled hidden>Please choose a problem</option>
+						<option value="1">Problem 1</option>
+						<option value="2">Problem 2</option>
+						<option value="3">Problem 3</option>
+						<option value="4">Problem 4</option>
+						<option value="5">Problem 5</option>
+						<option value="6">Problem 6</option>
+					<select>
+					<br>
+					<hr>
 					<input class="hover" type="submit" value="Submit">
 				</form>
 			</div>
