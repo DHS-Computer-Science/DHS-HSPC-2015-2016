@@ -16,6 +16,8 @@ class ThreadGrader(threading.Thread):
       #grabs job from queue
       file_name  = self.queue.get()
       basename   = re.search('/(.{8})\\.zip$', file_name).group(1)
+      
+      #TODO - Problem # is not defined - get from MySQL
       submission = Grader(file_name)
 
       '''

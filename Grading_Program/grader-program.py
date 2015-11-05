@@ -14,8 +14,11 @@ if __name__ == '__main__':
   parser  .add_argument('-u', '--username',            default='root',                 help='username to mysql server')
   parser  .add_argument('-p', '--password',            default='password',             help='password to mysql server')
   parser  .add_argument('-d', '--database',            default='teams',                help='database to connect to(of the mysql server)')
-  parser  .add_argument('-t', '--table',               default='grades',               help='table to update in database')
-  #TODO - parse test dir/ ya'know with the problems
+  parser  .add_argument('-t', '--table',               default='submissions',          help='table to update in database')
+  #TODO - add test dir arg(ya'know 'e on' wit 'e pro'lems)
 
+  #TODO use `vars(parser.parse_args())` to turn args into a dictionary
   args   = parser.parse_args()
+
+  #TODO - mergre conf here
   main.main(args)
