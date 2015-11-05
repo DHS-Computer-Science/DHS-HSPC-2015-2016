@@ -38,10 +38,14 @@ class ThreadGrader(threading.Thread):
         5: outputs do not match
         other: error
       '''
-      if submission.compile():
-        result = submission.run() #TODO use the result for something
-      else
-        result = 1
+
+      if submission.extract_info():
+        if submission.compile():
+          result = submission.run()
+        else
+          result = 1 #could not compile
+      else:
+        result = 2 #main not found
       
       #TODO - updates results?   maybe in another thread/queue or program
       #TODO - send back results? maybe in another thread/queue or program

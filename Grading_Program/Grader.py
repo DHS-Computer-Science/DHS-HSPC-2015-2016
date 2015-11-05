@@ -42,11 +42,15 @@ class Grader:
       time.sleep(1)
     return tester.returncode == 0
   
+  '''
+  outputs:
+    True:  main was found
+    False: not
+  '''
   def extract_info(self):
     self.outfile = self.submission_dir+'.output'
     
     #find main java file
-    #TODO - complain in no main was found
     for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.java'):
         with open(os.path.join(root, file), 'r') as f:
@@ -63,8 +67,7 @@ class Grader:
       problem_number = int(match.group(2))
     self.test_output = self.test_output.format(num=problem_number)
     self.test_input  = self.test_input.format(num=problem_number)
-    
-    return (team_id, problem_number)
+    return self.main_class != ''
   
   '''
   outputs:
