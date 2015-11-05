@@ -69,7 +69,10 @@ def main(args):
   observer.start()
   
   #grader manager
-  grade_manager = ThreadGrader(q, cnx) #create
+  if 'table' in grader_conf.keys():
+    grade_manager = ThreadGrader(q, cnx, grader_conf['table']) #create - w/ config file
+  else:
+    grade_manager = ThreadGrader(q, cnx, args.table) #create - w/o config file
   grade_manager.setDaemon(True)   #do not exit until all things needed to be graded are graded
   grade_manager.start()
   
