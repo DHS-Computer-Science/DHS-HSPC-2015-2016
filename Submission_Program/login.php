@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_POST["teamname"]) && isset($_POST["password"]) && isset($_GET["action"])) {
-	$teamname = $_POST["teamname"];
+	$teamname = mysql_real_escape_string(stripslashes($_POST["teamname"]));
 	$password = $_POST["password"];
 	$action = $_GET["action"];
 
