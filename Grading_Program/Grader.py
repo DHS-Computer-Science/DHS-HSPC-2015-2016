@@ -6,11 +6,11 @@ import fnmatch
 import os
 
 class Grader:
-  def __init__(self, path_to_zip):
+  def __init__(self, path_to_zip, test_dir='problems'):
     #the file that will be compared against
-    self.test_output = 'problems/{num}/output'
+    self.test_output = '{test}/{num}/output'.format(test=test_dir)
     #the input file
-    self.test_input  = 'problems/{num}/input'
+    self.test_input  = '{test}/{num}/input'.format(test=test_dir)
     #the file where the output will be writen
     self.outfile     = ''
 

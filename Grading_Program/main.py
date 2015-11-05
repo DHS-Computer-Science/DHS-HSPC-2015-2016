@@ -31,6 +31,7 @@ def read_db_config(filename='config.ini', section='mysql'):
 
 def main(args):
   grader_conf = {}
+  #TODO - merge 'args' and the config
   if args.config:
     grader_conf = read_db_config(args.config, 'grader')
 
@@ -69,6 +70,7 @@ def main(args):
   observer.start()
 
   #grader manager
+  #TODO - send the test_dir(the one with the problems)
   if 'table' in grader_conf.keys():
     grade_manager = ThreadGrader(q, cnx, grader_conf['table']) #create - w/ config file
   else:

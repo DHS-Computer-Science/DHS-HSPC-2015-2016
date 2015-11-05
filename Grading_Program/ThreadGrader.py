@@ -1,5 +1,6 @@
 import queue
 import threading
+import shutil
 import mysql.connector
 
 class ThreadGrader(threading.Thread):
@@ -36,6 +37,8 @@ class ThreadGrader(threading.Thread):
           result = 1 #could not compile
       else:
         result = 2 #main not found
+
+      #TODO - move zip archive somewhere
 
       #updates results into 'graded' column of /table/
       cursor.execute('UPDATE %s SET graded=%d WHERE name=%s', (self.table, result, basename))

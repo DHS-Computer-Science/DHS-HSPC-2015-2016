@@ -15,6 +15,7 @@ if __name__ == '__main__':
   parser  .add_argument('-p', '--password',            default='password',             help='password to mysql server')
   parser  .add_argument('-d', '--database',            default='teams',                help='database to connect to(of the mysql server)')
   parser  .add_argument('-t', '--table',               default='grades',               help='table to update in database')
+  #TODO - parse test dir/ ya'know with the problems
 
   args   = parser.parse_args()
   main.main(args)
