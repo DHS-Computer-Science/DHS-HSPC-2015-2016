@@ -13,23 +13,23 @@ class Grader:
     self.test_input  = 'problems/{num}/input'
     #the file where the output will be writen
     self.outfile     = ''
-    
+
     #location to extract to
     self.submission_dir = tempfile.mkdtemp(prefix='grader_staging_')
-    
+
     #extract files
     archexract = zipfile.ZipFile(path_to_zip)
     archexract.extractall(self.submission_dir)
     archexract.close()
-    
+
     #remove .class files
     for root, dirs, files in os.walk(sefl.submission_dir):
       for file in fnmatch.filter(files, '*.class'):
         os.remove(os.path.join(root, file))
-    
-    #the java file which will be run    
+
+    #the java file which will be run
     self.main_class  = ''
-    
+
   '''
   outputs:
     True:  compiled
@@ -41,7 +41,7 @@ class Grader:
     while p.poll() is None:
       time.sleep(1)
     return tester.returncode == 0
-  
+
   '''
   outputs:
     True:  main was found
@@ -49,17 +49,17 @@ class Grader:
   '''
   def extract_info(self):
     self.outfile = self.submission_dir+'.output'
-    
+
     #find main java file
     for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.java'):
         with open(os.path.join(root, file), 'r') as f:
           if 'void main(String' in f.read():
             self.main_class = os.path.join(root, file)
-    
+
     problem_number = -1 #place holder for errors
     team_id        = -1 #place holder for errors
-    
+
     #using regex to parse XML - TODO maybe use an actual parser?
     with open('{}/info.xml'.format(self.submission_dir), 'r') as f:
       match = re.search('<team_id>(\\d+)</team_id>.*?<problem>(\\d+)</problem>', f.read(), re.I|re.DOTALL)
@@ -68,7 +68,7 @@ class Grader:
     self.test_output = self.test_output.format(num=problem_number)
     self.test_input  = self.test_input.format(num=problem_number)
     return self.main_class != ''
-  
+
   '''
   outputs:
     True:  good
@@ -76,7 +76,7 @@ class Grader:
   '''
   def compare(self):
     filecmp.cmp(self.outfile, self.test_output)
-  
+
   '''
   Values for result:
    -1: not graded

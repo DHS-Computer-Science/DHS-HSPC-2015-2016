@@ -36,9 +36,9 @@ class ThreadGrader(threading.Thread):
           result = 1 #could not compile
       else:
         result = 2 #main not found
-      
+
       #updates results into 'graded' column of /table/
       cursor.execute('UPDATE %s SET graded=%d WHERE name=%s', (self.table, result, basename))
-      
+
       #signals to queue job is done
       self.queue.task_done()

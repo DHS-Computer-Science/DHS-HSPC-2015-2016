@@ -33,7 +33,7 @@ def main(args):
   grader_conf = {}
   if args.config:
     grader_conf = read_db_config(args.config, 'grader')
-  
+
   #establish compitition start time
   start_time = time.time()
   #TODO - use config file
@@ -41,7 +41,7 @@ def main(args):
                                   minutes=int(args.duration.partition(':')[2])).total_seconds() + start_time
   #create a queue
   q = queue.Queue()
-  
+
   #connect to mysql server
   try:
     conf = {
@@ -52,14 +52,14 @@ def main(args):
     }
     if args.config:
       conf.update(read_db_config(args.config))
-    
+
     cnx = mysql.connector.connect(conf)
   except Error as e:
     print(e)
   finally:
     #close connection no matter what
     cnx.close()
-  
+
   #file watcher
   observer = Observer()
   if 'submission_dir' in grader_conf.keys():
@@ -67,7 +67,7 @@ def main(args):
   else:
     observer.schedule(SubmissionWatcher(), path=args.submission_dir)
   observer.start()
-  
+
   #grader manager
   if 'table' in grader_conf.keys():
     grade_manager = ThreadGrader(q, cnx, grader_conf['table']) #create - w/ config file
@@ -75,12 +75,12 @@ def main(args):
     grade_manager = ThreadGrader(q, cnx, args.table) #create - w/o config file
   grade_manager.setDaemon(True)   #do not exit until all things needed to be graded are graded
   grade_manager.start()
-  
+
   #wait until end of compitition
   while time.time() <= end_time + 50: #give 50 second leeway
     #TODO - get input here, so that it was possible to add time
     time.sleep(1)
-  
+
   #end watchdog
   observer.stop()
   observer.join()
