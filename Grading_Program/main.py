@@ -36,7 +36,7 @@ def main(args):
   
   #establish compitition start time
   start_time = time.time()
-  #TODO - incorperate more times and use config file
+  #TODO - use config file
   end_time   = datetime.timedelta(hours=int(args.duration.partition(':')[0]),
                                   minutes=int(args.duration.partition(':')[2])).total_seconds() + start_time
   #create a queue
