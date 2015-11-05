@@ -3,17 +3,27 @@ if (!isset($_FILES["submission"])) {
 	header("Location: index.php");
 }
 
+// Directory settings
 $target_dir = "C:/xampp/submissions/";
-$target_file = $target_dir . basename($_FILES["submission"]["name"]); // File name needs to be assigned here. This needs configuration
+
+// Create a random file name that does not currently exist
+do {
+	// Generate a random 8 character long filename
+	$filename = "";
+	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$charactersLength = strlen($characters);
+	for ($i = 0; $i < 8; $i++) {
+		$filename .= $characters[rand(0, $charactersLength - 1)];
+	}
+
+	// Asign variables regarding the file information
+	$target_file = $target_dir . $filename . ".zip";
+	
+} while (file_exists($target_file);
+
+// File settings
 $uploadOk = 1;
 $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
-
-// Not needed because we will assign the names
-// Check if file already exists
-//if (file_exists($target_file)) {
-//    echo "Sorry, file already exists.";
-//    $uploadOk = 0;
-//}
 
 // Check file size
 if ($_FILES["submission"]["size"] > 1000000) {
