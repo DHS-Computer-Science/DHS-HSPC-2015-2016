@@ -75,13 +75,15 @@ class Grader:
     filecmp.cmp(self.outfile, self.test_output)
   
   '''
-  outputs:
-    0: good job
-    2: run time error
-    1: outputs do not match(The world is a mess, just like my numbering)
-    anything else: I don't know, figure it out yourself
-    3: file error(note this should be on the line above)
-    4: terminated, ran for too long
+  Values for result:
+   -1: not graded
+    0: good(complete)
+    1: compile error
+    2: no main class found
+    3: run time error
+    4: ran for too long
+    5: outputs do not match
+    other: error
   '''
   def run(self):
     mycmd = ['java', re.sub('(?i)\\.java$', '', self.main_class)]
@@ -96,9 +98,9 @@ class Grader:
             return 4
           time.sleep(0.5)
         if tester.returncode != 0:
-          return 2
+          return 3
         else:
-          return (0 if self.compare() else 1) #change it if you don't like it
+          return (0 if self.compare() else 5) #change it if you don't like it
     except IOError as e:
       #Should not happen, I think
       #Note I should watch my language in school related projects

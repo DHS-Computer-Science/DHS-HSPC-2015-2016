@@ -27,12 +27,21 @@ class ThreadGrader(threading.Thread):
                               #  current assumpion - dictionary
       
       attempt = row['attempts'] #TODO- get the correct number
-      
-      if not submission.compile():
-        #TODO - send back the feedback(compile failed)
-        return #TODO archive this submission instead of ending this procces
-      
-      result = submission.run() #TODO use the result for something
+      '''
+      Values for result:
+       -1: not graded
+        0: good(complete)
+        1: compile error
+        2: no main class found
+        3: run time error
+        4: ran for too long
+        5: outputs do not match
+        other: error
+      '''
+      if submission.compile():
+        result = submission.run() #TODO use the result for something
+      else
+        result = 1
       
       #TODO - updates results?   maybe in another thread/queue or program
       #TODO - send back results? maybe in another thread/queue or program
