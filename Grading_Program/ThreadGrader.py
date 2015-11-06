@@ -30,7 +30,12 @@ class ThreadGrader(threading.Thread):
       columns = tuple( [d[0].decode('utf8') for d in self.cursor.description] )
       for row in self.cursor:
         info.update(dict(zip(columns, row)))
-      
+
+      cur.execute("SELECT team_name FROM teams WHERE submission_id = %d",
+                  (info['team_id']))
+      columns = tuple( [d[0].decode('utf8') for d in self.cursor.description])
+      info.update(dict(zip(columns, row)))
+
       cur.execute("SELECT * FROM %s WHERE problem_id = %d AND team_id = %d",
                  (self.table, info['problem_id'], info['team_id']))
       for row in self.cursor:
