@@ -30,17 +30,17 @@ class ThreadGrader(threading.Thread):
 
       '''
       Values for result:
-       -1: not graded
-        0: good(complete)
-        1: compile error
-        2: no main class found
-        3: run time error
-        4: ran for too long
-        5: outputs do not match
+        0: not graded
+        1: good(complete)
+        2: compile error
+        3: no main class found
+        4: run time error
+        5: ran for too long
+        6: outputs do not match
         other: error
       '''
 
-      messages = ['complete', 'compile error',
+      messages = ['not graded', 'complete', 'compile error',
                   'no main class found', 'run time error',
                   'ran for too long', 'outputs do not match']
 
@@ -55,9 +55,9 @@ class ThreadGrader(threading.Thread):
         if submission.compile():
           result = submission.run()
         else
-          result = 1 #could not compile
+          result = 2 #could not compile
       else:
-        result = 2 #main not found
+        result = 3 #main not found
 
       #TODO - fill archive_name
       archive_name = '{team_id}_{problem_id}_{attempt}.zip'.fromat()#TODO

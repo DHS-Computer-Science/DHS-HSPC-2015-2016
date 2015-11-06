@@ -75,13 +75,13 @@ class Grader:
 
   '''
   Values for result:
-   -1: not graded
-    0: good(complete)
-    1: compile error
-    2: no main class found
-    3: run time error
-    4: ran for too long
-    5: outputs do not match
+    0: not graded
+    1: good(complete)
+    2: compile error
+    3: no main class found
+    4: run time error
+    5: ran for too long
+    6: outputs do not match
     other: error
   '''
   def run(self):
@@ -94,15 +94,15 @@ class Grader:
         while p.poll() is None:
           if (time.time() - start) < 60:
             p.kill()
-            return 4
+            return 5
           time.sleep(0.5)
         if tester.returncode != 0:
-          return 3
+          return 4
         else:
-          return (0 if self.compare() else 5) #change it if you don't like it
+          return (1 if self.compare() else 6) #change it if you don't like it
     except IOError as e:
       #Should not happen, I think
       #Note I should watch my language in school related projects
       #  but then again, who's gonna read this?
       print('Error: %s'.format(e.strerror))
-      return 3
+      return 7
