@@ -12,11 +12,22 @@
 - Will use a queueing system
   - so that the test of submissions will not interfere with each other
 
-## Setup/Installation
-Make sure that these things are intalled/working on the machine running the grader:
-- python3
-- watchdog(python modual use pip to install)
-- [mysql](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html "documentation")(standard python me thinks, but just in case...)
+## Problems
+The grader will need both input and output files for testing purposes.
+Here is a partial tree of the proposed directory structure:
+
+**Problems**/
+├── **1**/
+│   ├── input
+│   └── output
+├── **2**/
+│   ├── input
+│   └── output
+├── **3**/
+│   ├── input
+│   └── output
+...
+
 
 ## Additional Toughts
 - The computer running this program will have accounts for all the teams
