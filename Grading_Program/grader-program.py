@@ -38,6 +38,7 @@ if __name__ == '__main__':
   parser  .add_argument('-t', '--table',               default='submissions',          help='table to update in database')
   parser  .add_argument('-o', '--problems',            default='C:/problems',          help='directory with problem input/output files')
   parser  .add_argument('-s', '--submission',          default='C:/xampp/submissions', help='directory to watch for submissions')
+  parser  .add_argument('-a', '--archive',             default='C:/archive',           help='directory where graded submission end up')
 
   args = vars(parser.parse_args())
 

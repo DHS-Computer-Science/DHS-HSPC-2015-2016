@@ -6,11 +6,11 @@ import fnmatch
 import os
 
 class Grader:
-  def __init__(self, path_to_zip, test_dir='problems'):
+  def __init__(self, path_to_zip, test_dir='problems', num):
     #the file that will be compared against
-    self.test_output = '{test}/{num}/output'.format(test=test_dir)
+    self.test_output = '{test}/{num}/output'.format(test=test_dir, num=num)
     #the input file
-    self.test_input  = '{test}/{num}/input'.format(test=test_dir)
+    self.test_input  = '{test}/{num}/input'.format(test=test_dir, num=num)
     #the file where the output will be writen
     self.outfile     = ''
 
@@ -23,7 +23,7 @@ class Grader:
     archexract.close()
 
     #remove .class files
-    for root, dirs, files in os.walk(sefl.submission_dir):
+    for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.class'):
         os.remove(os.path.join(root, file))
 
@@ -69,6 +69,9 @@ class Grader:
   '''
   def compare(self):
     filecmp.cmp(self.outfile, self.test_output)
+
+  def get_dir():
+    return self.submission_dir
 
   '''
   Values for result:
