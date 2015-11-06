@@ -1,12 +1,11 @@
 import subprocess
 import tempfile
 import zipfile
-import filecmp
 import fnmatch
 import os
 
 class Grader:
-  def __init__(self, path_to_zip, test_dir='problems', num):
+  def __init__(self, path_to_zip, test_dir, num):
     #the file that will be compared against
     self.test_output = '{test}/{num}/output'.format(test=test_dir, num=num)
     #the input file
@@ -48,7 +47,7 @@ class Grader:
     False: not
   '''
   def extract_info(self):
-    self.outfile = self.submission_dir+'.output'
+    self.outfile = os.join(self.submission_dir, 'output')
 
     #find main java file
     for root, dirs, files in os.walk(self.submission_dir):
@@ -68,7 +67,18 @@ class Grader:
     False: baad
   '''
   def compare(self):
-    filecmp.cmp(self.outfile, self.test_output)
+    status = 6
+    with open(self.outfile, 'r') as user, \
+         open(self.test_output, 'r') as test:
+      u_out   = user.read().replace('\r', '\r')
+      correct = test.read().replace('\r', '\r')
+
+    if u_out == correct:
+      status = 1
+    elif re.sub('[\\s\n]+', '', u_out.lower()) == \
+         re.sub('[\\s\n]+', '', correct.lower()):
+      status = 2
+    return status
 
   def get_dir():
     return self.submission_dir
@@ -77,12 +87,13 @@ class Grader:
   Values for result:
     0: not graded
     1: good(complete)
-    2: compile error
-    3: no main class found
-    4: run time error
-    5: ran for too long
-    6: outputs do not match
-    other: error
+    1: formatting error
+    3: compile error
+    4: no main class found
+    5: run time error
+    6: ran for too long
+    7: outputs do not match
+    other: very very bad error
   '''
   def run(self):
     mycmd = ['java', re.sub('(?i)\\.java$', '', self.main_class)]
@@ -96,10 +107,10 @@ class Grader:
             p.kill()
             return 5
           time.sleep(0.5)
-        if tester.returncode != 0:
-          return 4
-        else:
-          return (1 if self.compare() else 6) #change it if you don't like it
+      if tester.returncode != 0:
+        return 4
+      else:
+        return self.compare() #change it if you don't like it
     except IOError as e:
       #Should not happen, I think
       #Note I should watch my language in school related projects

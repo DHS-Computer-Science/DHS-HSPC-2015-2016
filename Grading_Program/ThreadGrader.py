@@ -42,16 +42,17 @@ class ThreadGrader(threading.Thread):
       Values for result:
         0: not graded
         1: good(complete)
-        2: compile error
-        3: no main class found
-        4: run time error
-        5: ran for too long
-        6: outputs do not match
-        other: error
+        1: formatting error
+        3: compile error
+        4: no main class found
+        5: run time error
+        6: ran for too long
+        7: outputs do not match
+        other: very very bad error
       '''
 
-      messages = ['not graded', 'complete', 'compile error',
-                  'no main class found', 'run time error',
+      messages = ['not graded', 'complete', 'formatting error',
+                  'compile error', 'no main class found', 'run time error',
                   'ran for too long', 'outputs do not match']
 
       xml = '''<submission>
@@ -65,24 +66,24 @@ class ThreadGrader(threading.Thread):
       if submission.extract_info():
         if submission.compile():
           result = submission.run()
-        else
-          result = 2 #could not compile
+        else:
+          result = 3 #could not compile
       else:
-        result = 3 #main not found
+        result = 4 #main not found
 
       archive_name = '{team_id}_{problem_id}_{attempt}.zip'.fromat(
                       team_id=info['team_id'],
-                      problem_id=info['problem_id']
+                      problem_id=info['problem_id'],
                       attempt=info['attempts'])
       archive_name = os.path.join(self.archive_dir, archive_name)
       info_file    = tempfile.mkstemp()
       with open(info_file, 'w') as f:
-        f.write(xml.format(team_name='',#TODO
+        f.write(xml.format(team_name=info['team_name'],
                            team_id=info['team_id'],
                            problem_id=info['problem_id'],
                            attempt=info['attempts'],
                            grade_code=result,
-                           grade_message=messages[result] if result < 7 and result > 0 else 'Unknown ERROR(bad)',
+                           grade_message=messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)',
                            time=''))
 
       zipper = zipfile.ZipFile(archive_name, 'w',zipfile.ZIP_DEFLATED)
