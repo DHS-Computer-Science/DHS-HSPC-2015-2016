@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
 
 import main
-import sys
+import sys, re
 import argparse
+from datetime import datetime, date
 from configparser import ConfigParser
+
+def time(s):
+  try:
+    if re.search('\\d\\d:\\d\\d', s):
+      return datetime.strptime(date.today().isoformat()+s+':00',
+                               '%Y-%m-%d%H:%M:%S')
+    else:
+      return datetime.strptime(date.today().isoformat()+s,
+                               '%Y-%m-%d%H:%M:%S')
+  except ValueError:
+    msg = 'Not a valid date: \"{0}\".'.format(s)
+    raise argparse.ArgumentTypeError(msg)
 
 def read_db_config(filename='config.ini', section='mysql'):
   """ Read database configuration file and return a dictionary object
@@ -29,20 +42,27 @@ def read_db_config(filename='config.ini', section='mysql'):
 if __name__ == '__main__':
   #read arguments from command line
   parser = argparse.ArgumentParser(description=__doc__)
-  parser  .add_argument('-c', '--config',              default=None,                   help='config file')
-  parser  .add_argument('-e', '--duration',            default='04:00',                help='duration of cometition, format HH:MM')
-  parser  .add_argument('-i', '--host',                default='localhost',            help='url of mysql server')
-  parser  .add_argument('-u', '--username',            default='root',                 help='username to mysql server')
-  parser  .add_argument('-p', '--password',            default='password',             help='password to mysql server')
-  parser  .add_argument('-d', '--database',            default='teams',                help='database to connect to(of the mysql server)')
-  parser  .add_argument('-t', '--table',               default='submissions',          help='table to update in database')
-  parser  .add_argument('-o', '--problems',            default='C:/problems',          help='directory with problem input/output files')
-  parser  .add_argument('-s', '--submission',          default='C:/xampp/submissions', help='directory to watch for submissions')
-  parser  .add_argument('-a', '--archive',             default='C:/archive',           help='directory where graded submission end up')
+  parser  .add_argument('-c', '--config',              default=None,                         help='config file')
+  parser  .add_argument('-e', '--end-time',            default='16:00',     type=time, help='time when cometition ends, format HH:MM[:SS]')
+  parser  .add_argument('-i', '--host',                default='localhost',                  help='url of mysql server')
+  parser  .add_argument('-u', '--username',            default='root',                       help='username to mysql server')
+  parser  .add_argument('-p', '--password',            default='password',                   help='password to mysql server')
+  parser  .add_argument('-d', '--database',            default='teams',                      help='database to connect to(of the mysql server)')
+  parser  .add_argument('-t', '--table',               default='submissions',                help='table to update in database')
+  parser  .add_argument('-o', '--problems',            default='C:/problems',                help='directory with problem input/output files')
+  parser  .add_argument('-s', '--submission',          default='C:/xampp/submissions',       help='directory to watch for submissions')
+  parser  .add_argument('-a', '--archive',             default='C:/archive',                 help='directory where graded submission end up')
 
   args = vars(parser.parse_args())
 
   if args['config']:
     args.update(read_db_config(args['config'], 'grader'))
+
+  if type(args['end_time']) == str:
+    try:
+      args['end_time'] = time(args['end_time'])
+    except ValueError:
+      msg = 'Not a valid date: \"{0}\".'.format(s)
+      raise configparser.InterpolationSyntaxError(msg)
 
   main.main(args)
