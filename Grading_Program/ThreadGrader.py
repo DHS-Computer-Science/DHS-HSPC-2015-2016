@@ -58,6 +58,7 @@ class ThreadGrader(threading.Thread):
   <team id=\"{team_id}\">{team_name}</team>
   <problem>{problem_id}</problem>
   <grade code={grade_code}>{grade_message}</grade>
+  <attempt>{attempt}</attempt>
   <time>{submission_time}</time>
 </submission>'''
 
@@ -69,12 +70,20 @@ class ThreadGrader(threading.Thread):
       else:
         result = 3 #main not found
 
-      #TODO - fill archive_name
-      archive_name = '{team_id}_{problem_id}_{attempt}.zip'.fromat()#TODO
+      archive_name = '{team_id}_{problem_id}_{attempt}.zip'.fromat(
+                      team_id=info['team_id'],
+                      problem_id=info['problem_id']
+                      attempt=info['attempts'])
       archive_name = os.path.join(self.archive_dir, archive_name)
       info_file    = tempfile.mkstemp()
       with open(info_file, 'w') as f:
-        f.write(xml.format('place holder'))#TODO - get actual values
+        f.write(xml.format(team_name='',#TODO
+                           team_id=info['team_id'],
+                           problem_id=info['problem_id'],
+                           attempt=info['attempts'],
+                           grade_code=result,
+                           grade_message=messages[result] if result < 7 and result > 0 else 'Unknown ERROR(bad)',
+                           time=''))
 
       zipper = zipfile.ZipFile(archive_name, 'w',zipfile.ZIP_DEFLATED)
       for root, dirs, files in os.walk(submission.get_dir()):
