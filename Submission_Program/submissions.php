@@ -10,7 +10,7 @@ if (isset($_COOKIE["n"]) == false || isset($_COOKIE["p"]) == false) {
 	exit;
 }
 
-$username = mysql_real_escape_string(stripslashes($_COOKIE["n"]));
+$username = $conn->real_escape_string(($_COOKIE["n"]));
 $password = $_COOKIE["p"];
 
 $sql = "SELECT * FROM teams WHERE team_name='$username'";

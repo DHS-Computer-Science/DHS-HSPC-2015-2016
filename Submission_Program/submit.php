@@ -19,11 +19,11 @@ do {
 	// Asign variables regarding the file information
 	$target_file = $target_dir . $filename . ".zip";
 	
-} while (file_exists($target_file);
+} while (file_exists($target_file));
 
 // File settings
 $uploadOk = 1;
-$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+$imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
 // Check file size
 if ($_FILES["submission"]["size"] > 1000000) {

@@ -1,11 +1,9 @@
 <?php
-
 if (isset($_POST["teamname"]) && isset($_POST["password"]) && isset($_GET["action"])) {
-	$teamname = mysql_real_escape_string(stripslashes($_POST["teamname"]));
+	include("connections.php");
+	$teamname = $conn->real_escape_string($_POST["teamname"]);
 	$password = $_POST["password"];
 	$action = $_GET["action"];
-
-	include("connections.php");
 	
 	if (strcasecmp($action, "login") == 0) {
 		// Perform login attempt
