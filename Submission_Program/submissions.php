@@ -57,6 +57,7 @@ $conn->close();
 			<div id="small">
 				<h5 class="text">Problem Submissions</h5>
 				<hr>
+				<div id="errorMessages">
 				<?php
 					if (isset($_GET["code"])) {
 						$code = $_GET["code"];
@@ -75,10 +76,33 @@ $conn->close();
 						}
 					}
 				?>
-				<form action="submit.php" method="post" enctype="multipart/form-data">
+				</div>
+				<script>
+					function checkSelect() {
+						var selectObject = document.getElementById("problemNumberSelect");
+						var selectValue = selectObject.options[selectObject.selectedIndex].value;
+						var errorMessages = document.getElementById("errorMessages");
+						errorMessages.innerHTML = "";
+						if (selectValue == 0) {
+							errorMessages.innerHTML = "<h5 class='text'>Please select a problem number</h5><hr>";
+							return false;
+						} else {
+							errorMessages.innerHTML = "";
+							return true;
+						}
+					}
+					function doSubmit() {
+						if (checkSelect() == true) {
+							if (document.getElementById("submission").files.length == 1) {
+								document.getElementById("submitForm").submit();
+							}
+						}
+					}
+				</script>
+				<form action="submit.php" method="post" enctype="multipart/form-data" id="submitForm">
 					<input type="file" name="submission" id="submission" class="noborder text" required>
 					<br>
-					<select name="problemNumber" style="width:100%; margin-top:8px; margin-bottom:8px; padding:8px;">
+					<select name="problemNumber" style="width:100%; margin-top:8px; margin-bottom:8px; padding:8px;" id="problemNumberSelect" onchange="checkSelect()">
 						<option value="0" selected disabled hidden>Please choose a problem</option>
 						<option value="1">Problem 1</option>
 						<option value="2">Problem 2</option>
@@ -89,7 +113,7 @@ $conn->close();
 					<select>
 					<br>
 					<hr>
-					<input class="hover" type="submit" value="Submit">
+					<input class="hover" type="button" onClick="doSubmit()" value="Submit">
 				</form>
 			</div>
 		</div>
