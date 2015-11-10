@@ -77,6 +77,7 @@ $conn->close();
 					}
 				?>
 				</div>
+				<div id="noFileErrorMessage"></div>
 				<script>
 					function checkSelect() {
 						var selectObject = document.getElementById("problemNumberSelect");
@@ -95,6 +96,8 @@ $conn->close();
 						if (checkSelect() == true) {
 							if (document.getElementById("submission").files.length == 1) {
 								document.getElementById("submitForm").submit();
+							} else {
+								document.getElementById("noFileErrorMessage").innerHTML = "<h5 class='text'>Please select a file</h5><hr>";
 							}
 						}
 					}
