@@ -33,7 +33,7 @@ if ($_FILES["submission"]["size"] > 1000000) {
     $uploadOk = 0;
 }
 // Allow certain file formats
-if($imageFileType != "zip") {
+if($imageFileType != ".zip") {
     header("Location: submissions.php?code=0");
     $uploadOk = 0;
 }
