@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST["teamname"]) && isset($_POST["password"]) && isset($_GET["action"])) {
 	include("connections.php");
-	$teamname = $conn->real_escape_string($_POST["teamname"]);
+	$teamname = $_POST["teamname"];
 	$password = $_POST["password"];
 	$action = $_GET["action"];
 	
@@ -9,10 +9,13 @@ if (isset($_POST["teamname"]) && isset($_POST["password"]) && isset($_GET["actio
 		// Perform login attempt
 
 		// The query
-		$sql = "SELECT * FROM teams WHERE team_name='$teamname'";
+		// $sql = "SELECT * FROM teams WHERE team_name='$teamname'";
 
-		// Perform the query
-		$results = $conn->query($sql);
+		// Get the data associated with the username provided
+		$stmt = $conn->prepare("SELECT * FROM teams WHERE team_name=?");
+		$stmt->bind_param("s", $teamname);
+		$stmt->execute();
+		$results = $stmt->get_result();
 	
 		// If we got at least 1 result back
 		if ($results->num_rows == 1) {
