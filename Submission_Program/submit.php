@@ -25,7 +25,7 @@ do {
 
 // File settings
 $uploadOk = 1;
-$imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+$imageFileType = pathinfo($_FILES["submission"]["name"], PATHINFO_EXTENSION);
 
 // Check file size
 if ($_FILES["submission"]["size"] > 1000000) {
@@ -33,7 +33,7 @@ if ($_FILES["submission"]["size"] > 1000000) {
     $uploadOk = 0;
 }
 // Allow certain file formats
-if($imageFileType != ".zip") {
+if($imageFileType != "zip") {
     header("Location: submissions.php?code=0");
     $uploadOk = 0;
 }
