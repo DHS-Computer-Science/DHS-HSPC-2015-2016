@@ -10,12 +10,13 @@ if (isset($_COOKIE["n"]) == false || isset($_COOKIE["p"]) == false) {
 	exit;
 }
 
-$username = $conn->real_escape_string($_COOKIE["n"]);
+$username = $_COOKIE["n"];
 $password = $_COOKIE["p"];
 
-$sql = "SELECT * FROM teams WHERE team_name='$username'";
-
-$results = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM teams WHERE team_name=?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$results = $stmt->get_result();
 
 if ($results->num_rows == 1) {
 	while($row = $results->fetch_assoc()) {	

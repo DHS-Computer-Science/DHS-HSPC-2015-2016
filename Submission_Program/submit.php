@@ -3,6 +3,8 @@ if (!isset($_FILES["submission"])) {
 	header("Location: index.php");
 }
 
+include("connections.php");
+
 // Directory settings
 $target_dir = "C:/xampp/submissions/";
 
@@ -23,7 +25,7 @@ do {
 
 // File settings
 $uploadOk = 1;
-$imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+$imageFileType = pathinfo($_FILES["submission"]["name"], PATHINFO_EXTENSION);
 
 // Check file size
 if ($_FILES["submission"]["size"] > 1000000) {
@@ -41,7 +43,28 @@ if ($uploadOk == 0) {
 // if everything is ok, try to upload file
 } else {
     if (move_uploaded_file($_FILES["submission"]["tmp_name"], $target_file)) {
-        header("Location: submissions.php?code=3");
+		// Get the team name
+		if (isset($_COOKIE["n"]) && isset($_POST["problemNumber"])) {
+			$teamname = $_COOKIE["n"];
+			
+			// Prepared statement for getting the id of the user
+			$stmt = $conn->prepare("SELECT team_id FROM teams WHERE team_name=?");
+			$stmt->bind_param("s", $teamname);
+			$stmt->execute();
+			$res = $stmt->get_result();
+			$row = $res->fetch_assoc();
+			
+			// Team ID
+			$team_id = $row["team_id"];
+			$problem_id = $_POST["problemNumber"];
+	
+			// Prepared statement for entering the submission
+			$stmt = $conn->prepare("INSERT INTO submissions (submission_name, problem_id, team_id, grade, time) VALUES (?, ?, ?, ?, ?)");
+			$stmt->bind_param("siiii", $filename, $problem_id, $team_id, $grade = 0, $time = time());
+			$stmt->execute();
+			
+			header("Location: submissions.php?code=3");
+		}
     } else {
         header("Location: submissions.php?code=2");
     }
