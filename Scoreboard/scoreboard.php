@@ -23,13 +23,14 @@
 				<br>
 				<table>
 				<tr>
-					<th>Team</th>
-					<th>Completed</th>
-					<th>Total Time</th>
+					<th>Rank</th>
+					<th>Name</th>
+					<th>Solved</th>
+					<th>Time</th>
 					<?php
 						// Create 2 header rows:
-						// Team | Done | Time |      P1     |      P2     | ...
-						//                    | Trys | Time | Trys | Time | ...
+						// Rank | Name | Solved | Time |     A     |     B     | ...
+						//                             | Trys/Time | Trys/Time | ...
 						$number_of_problems = 6;
 						$penalty_time       = 600; // TODO - set penalty time - in seconds
 						
@@ -46,15 +47,7 @@
 						}
 						
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "						<th colspan = \"2\">Problem ".$i."</th>\n";
-						}
-						echo "					</tr>";
-						echo "					<tr>";
-						echo "						<th colspan=\"3\"></th>";
-				
-						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "						<th>Attempts</th>\n";
-							echo "						<th>Time</th>\n";
+							echo "						<th>".chr($i+64)."</th>\n";
 						}
 						echo "					</tr>";
 					
