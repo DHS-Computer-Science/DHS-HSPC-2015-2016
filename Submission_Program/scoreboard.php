@@ -15,17 +15,17 @@
 	<body>
 		<div id="header">
 			<div class="navbutton">
-				LCPS HSPC
+				<a href="submissions.php">LCPS HSPC</a>
 			</div>
 		</div>
-		<div id="content" style="display: inline-block; text-align: center;">
+		<div id="content" style="display: inline-block; text-align: center; width: 95%; margin-left: 2.5%">
 			<div class="text">
 				<br>
 				<table>
 				<tr>
-				  <th>Team</th>
-				<th>Done</th>
-				<th>Total Time</th>
+					<th>Team</th>
+					<th>Completed</th>
+					<th> Total Time</th>
 					<?php
 						// Create 2 header rows:
 						// Team | Done | Time |      P1     |      P2     | ...
@@ -53,7 +53,7 @@
 						echo "<th colspan=\"3\"></th>";
 				
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "<th>Trys</th>\n";
+							echo "<th>Attempts</th>\n";
 							echo "<th>Time</th>\n";
 						}
 						echo "</tr>";
@@ -76,7 +76,7 @@
 							// Set default values for variables 
 							$table      = "";
 							$total_time = 0;
-							$complete   = 0;
+							$complete   = "";
 							
 							// For loop that repeates 6 times for the 6 problems we have
 							// TODO - may need to make next line "$number_of_problems-1" instead of "$number_of_problems"
@@ -98,7 +98,7 @@
 									$num_submissions++; // Don't touch
 									
 									if($row['grade'] === 1) {// TODO - fix this line to if the grade value is 1
-										$complete++;
+										$complete = $complete . $problem_id . ", ";
 										//Yes the next three lines go here
 										$problem_time       = ($row['time'] - $start_time); // TODO - get time for this problem in seconds
 										$problem_time      += (($num_submissions-1)*$penalty_time); // I touched this. Was this suppose to be +=?
@@ -118,7 +118,7 @@
 								$table .= "<td>".gmdate("H:i:s", $problem_time)."</td>\n";
 							}
 							echo "<td>".$_COOKIE["n"]."</td>\n";
-							echo "<td>".$complete."</td>\n";
+							echo "<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";  // Substring to cut off the last ", "
 							echo "<td>".gmdate("H:i:s", $total_time)."</td>\n";
 							echo $table;
 							echo "</tr>";
