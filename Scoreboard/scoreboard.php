@@ -141,12 +141,11 @@
 										$total_time += $problem_time;// Then add on to the total team time
 									}
 								}
-								$table .= "						<td>".$num_submissions."</td>\n";
-								$table .= "						<td>".gmdate("H:i:s", $problem_time)."</td>\n";
+								$table .= "						<td>".$num_submissions."/".$problem_time."</td>\n";
 							}
 							$html_data .= "						<td>".$team["team_name"]."</td>\n"; // Extract the team_name value from the $team array object
-							$html_data .= "						<td>".$complete_count."/";
-							$html_data .= "$total_time.</td>\n";
+							$html_data .= "						<td>".$complete_count."</td>\n";
+							$html_data .= "						<td>"$total_time."</td>\n";
 							$html_data .= $table;
 							$html_data .= "					</tr>";
 
