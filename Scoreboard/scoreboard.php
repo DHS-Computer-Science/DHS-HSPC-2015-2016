@@ -46,17 +46,17 @@
 						}
 						
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "<th colspan = \"2\">Problem ".$i."</th>\n";
+							echo "						<th colspan = \"2\">Problem ".$i."</th>\n";
 						}
-						echo "</tr>";
-						echo "<tr>";
-						echo "<th colspan=\"3\"></th>";
+						echo "					</tr>";
+						echo "					<tr>";
+						echo "						<th colspan=\"3\"></th>";
 				
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "<th>Attempts</th>\n";
-							echo "<th>Time</th>\n";
+							echo "						<th>Attempts</th>\n";
+							echo "						<th>Time</th>\n";
 						}
-						echo "</tr>";
+						echo "					</tr>";
 					
 						// First get the teams in order and store them into a PHP array
 							// This array will then be looped in the correct order and the data will be parsed
@@ -80,6 +80,7 @@
 						
 						// Here's my attempt at a class
 						// Amazing isn't it?
+						// (It's more like a struct)
 						class TeamData {
 							public $total_time = 0;
 							public $completed = 0;
@@ -113,22 +114,20 @@
 							$html_data = "";
 							
 							// Add a row for each team
-							$html_data .= "<tr>";
-						  
+							$html_data .= "					<tr>";
+
 							// Set default values for variables
-							$table      = "";
-							$total_time = 0;
-							$complete   = "";
+							$table          = "";
+							$total_time     = 0;
+							$complete       = "";
 							$complete_count = 0;
 							
 							// For loop that repeates 6 times for the 6 problems we have
-							// TODO - may need to make next line "$number_of_problems-1" instead of "$number_of_problems"
 							// This line was made to start at 1 and end at $number)of_problems+1
 								// This is because the problem ids start at 1, instead of 0
 									// This is because the submission page uses a "problem number" of 0 as "problem not selected"
-								// If $problem_id started at 0, and went to $number_of_problems then the data for problem 1 would appear under problem 2 and so on
 								
-							for ($problem_id = 1; $problem_id < $number_of_problems + 1; $problem_id++) {
+							for ($problem_id = 1; $problem_id <= $number_of_problems; $problem_id++) {
 								$num_submissions = 0;
 								
 								// Get all the submission data for each problem for each time
@@ -138,31 +137,31 @@
 								$res = $stmt->get_result();
 								$problem_time = 0;
 								while($row = $res->fetch_assoc()) {
-									$num_submissions++; // Don't touch
+									$num_submissions++; // Increase the number of submission to display for this problem
 									
-									if($row['grade'] === 1) {// TODO - fix this line to if the grade value is 1
+									if($row['grade'] === 1) {
 										$complete = $complete . $problem_id . ", ";
 										$complete_count++;
-										//Yes the next three lines go here
-										$problem_time       = ($row['time'] - $start_time); // TODO - get time for this problem in seconds
-										$problem_time      += (($num_submissions-1)*$penalty_time); // I touched this. Was this suppose to be +=?
-											// If you had 1 submission it would do *= (1-1)*600 which would be *= (0)*600 which is 0...so it resets the time to 0
-										$total_time += $problem_time;
+										// Set the problem time to the time of the completed attempt
+										//	 then add penalty time for all incorrect submissions
+										$problem_time      = ($row['time'] - $start_time);
+										$problem_time     += (($num_submissions-1)*$penalty_time);
+										$total_time += $problem_time;// Then add on to the total team time
 									}
 								}
-								$table .= "<td>".$num_submissions."</td>\n";
-								$table .= "<td>".gmdate("H:i:s", $problem_time)."</td>\n";
+								$table .= "						<td>".$num_submissions."</td>\n";
+								$table .= "						<td>".gmdate("H:i:s", $problem_time)."</td>\n";
 							}
-							$html_data .=  "<td>".$team["team_name"]."</td>\n"; // Extract the team_name value from the $team array object
-							$html_data .=  "<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";  // Substring to cut off the last ", "
-							$html_data .=  "<td>".gmdate("H:i:s", $total_time)."</td>\n";
-							$html_data .=  $table;
-							$html_data .=  "</tr>";
+							$html_data .= "						<td>".$team["team_name"]."</td>\n"; // Extract the team_name value from the $team array object
+							$html_data .= "						<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";	// Substring to cut off the last ", "
+							$html_data .= "						<td>".gmdate("H:i:s", $total_time)."</td>\n";
+							$html_data .= $table;
+							$html_data .= "					</tr>";
 
 							// Set the $teamData object variables
-							$teamData->html_data = $html_data;
+							$teamData->html_data  = $html_data;
 							$teamData->total_time = $total_time;
-							$teamData->completed = $complete_count;
+							$teamData->completed  = $complete_count;
 
 							// Add the $teamData object to an array of $teamData objects
 							array_push($teamsWithData, $teamData);
@@ -178,14 +177,12 @@
 						// Put all the teamdata objects that have the same amount of completed problems into an array
 						// Keep this order! (6 -> 0) it helps organization later!
 						// Being in this order "sorts" the problems for us from (largest number of problems compelted) to (smallest number of problems completed)
-						$groups = array(
-							"6" => array(),
-							"5" => array(),
-							"4" => array(),
-							"3" => array(),
-							"2" => array(),
-							"1" => array(),
-						);
+						
+						//Using a for loop to populate, in case # of problems changes later...
+						$groups = array();
+						for($i = $number_of_problems; $i >= 0; $i--) {
+							array_push($groups, "".$i => array());
+						}
 						
 						// Put the teamData objects into an array with all other teamData objects that have the same number of completed problems
 						foreach ($teamsWithData as $team) {
