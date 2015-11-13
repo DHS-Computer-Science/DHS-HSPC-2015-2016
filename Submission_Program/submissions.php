@@ -48,7 +48,7 @@ $conn->close();
 	<body>
 		<div id="header">
 			<div class="navbutton">
-				LCPS HSPC
+				<a href="scoreboard.php">LCPS HSPC</a>
 			</div>
 		</div>
 		<div id="logout">
