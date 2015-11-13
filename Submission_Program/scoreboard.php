@@ -25,7 +25,7 @@
 				<tr>
 					<th>Team</th>
 					<th>Completed</th>
-					<th> Total Time</th>
+					<th>Total Time</th>
 					<?php
 						// Create 2 header rows:
 						// Team | Done | Time |      P1     |      P2     | ...
@@ -69,11 +69,33 @@
 						// Create an array of team_ids
 						$teams = $result->fetch_array(MYSQLI_NUM);
 					
+						/* This will not display the teams in ascending order of total time.
+							How do we want to go about doing this?
+							I think we could either:
+								- Create a team class that stores all the data
+								- Store all the data into a multidimensional array (Dictionary?)
+						*/
+						
+						// Here's my attempt at a class
+						// Amazing isn't it?
+						class TeamData {
+							public $total_time = 0;
+							public $html_data = "";
+						}
+						
+						$teamsWithData = array();
+						
 						foreach ($teams as $team) {
+							// TeamData class for this class
+							$teamData = new TeamData();
+							
+							// HTML data for this team
+							$html_data = "";
+							
 							// Add a row for each team
-							echo "          <tr>";
+							$html_data .= "<tr>";
 						  
-							// Set default values for variables 
+							// Set default values for variables
 							$table      = "";
 							$total_time = 0;
 							$complete   = "";
@@ -103,25 +125,29 @@
 										$problem_time       = ($row['time'] - $start_time); // TODO - get time for this problem in seconds
 										$problem_time      += (($num_submissions-1)*$penalty_time); // I touched this. Was this suppose to be +=?
 											// If you had 1 submission it would do *= (1-1)*600 which would be *= (0)*600 which is 0...so it resets the time to 0
-										$total_time += $problem_time; // I think this needs to be changed/fixed
-											// I did some dummy tests with only 2 entries in, one for question 1 and one for question 4.
-											// Question 1 and 4 were both assigned a grade of 1 (Correct)
-											// Question 4 was submitted roughly 15 minutes after question 1-1
-											// The total time ended up being 22:50:00 or some crazy long number.
-											// This is because when we add the numbers together we get a fairly large number
-											// Which causes wierd things since it is not an accurate depiction.
-											// I think we just need to remove the time (in seconds) from the epoch to the start of the event.
-											// That way the times we add are really just seconds since the start of the event.
+										$total_time += $problem_time;
 									}
 								}
 								$table .= "<td>".$num_submissions."</td>\n";
 								$table .= "<td>".gmdate("H:i:s", $problem_time)."</td>\n";
 							}
-							echo "<td>".$_COOKIE["n"]."</td>\n";
-							echo "<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";  // Substring to cut off the last ", "
-							echo "<td>".gmdate("H:i:s", $total_time)."</td>\n";
-							echo $table;
-							echo "</tr>";
+							$html_data .=  "<td>".$_COOKIE["n"]."</td>\n";
+							$html_data .=  "<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";  // Substring to cut off the last ", "
+							$html_data .=  "<td>".gmdate("H:i:s", $total_time)."</td>\n";
+							$html_data .=  $table;
+							$html_data .=  "</tr>";
+							
+							$teamData->html_data = $html_data;
+							$teamData->total_time = $total_time;
+							
+							array_push($teamsWithData, $teamData);
+						}
+						
+						foreach ($teamsWithData as $teamData) {
+							// Calculate the winner here using
+							// $teamData->total_time
+							// To get the total time of a team in seconds (This is not formatted into H:i:s, it is in seconds)
+							echo $teamData->html_data;
 						}
 					?>
 				</table>
