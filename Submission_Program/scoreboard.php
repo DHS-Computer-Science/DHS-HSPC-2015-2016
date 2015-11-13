@@ -46,17 +46,17 @@
 						}
 						
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "            <th colspan = \"2\">Problem ".$i."</th>\n";
+							echo "<th colspan = \"2\">Problem ".$i."</th>\n";
 						}
-						echo "          </tr>";
-						echo "          <tr>";
-						echo "            <th colspan = \"3\"></th>";
+						echo "</tr>";
+						echo "<tr>";
+						echo "<th colspan=\"3\"></th>";
 				
 						for ($i = 1; $i <= $number_of_problems; $i++) {
-							echo "            <th>Trys</th>\n";
-							echo "            <th>Time</th>\n";
+							echo "<th>Trys</th>\n";
+							echo "<th>Time</th>\n";
 						}
-						echo "          </tr>";
+						echo "</tr>";
 					
 						// First get the teams in order and store them into a PHP array
 							// This array will then be looped in the correct order and the data will be parsed
@@ -114,14 +114,14 @@
 											// That way the times we add are really just seconds since the start of the event.
 									}
 								}
-								$table .= "            <td>".$num_submissions."</td>\n";
-								$table .= "            <td>".gmdate("H:i:s", $problem_time)."</td>\n";
+								$table .= "<td>".$num_submissions."</td>\n";
+								$table .= "<td>".gmdate("H:i:s", $problem_time)."</td>\n";
 							}
 							echo "<td>".$_COOKIE["n"]."</td>\n";
-							echo "            <td>".$complete."</td>\n";
-							echo "            <td>".gmdate("H:i:s", $total_time)."</td>\n";
+							echo "<td>".$complete."</td>\n";
+							echo "<td>".gmdate("H:i:s", $total_time)."</td>\n";
 							echo $table;
-							echo "          </tr>";
+							echo "</tr>";
 						}
 					?>
 				</table>
