@@ -140,7 +140,6 @@
 									$num_submissions++; // Increase the number of submission to display for this problem
 									
 									if($row['grade'] === 1) {
-										$complete = $complete . $problem_id . ", ";
 										$complete_count++;
 										// Set the problem time to the time of the completed attempt
 										//	 then add penalty time for all incorrect submissions
@@ -153,8 +152,8 @@
 								$table .= "						<td>".gmdate("H:i:s", $problem_time)."</td>\n";
 							}
 							$html_data .= "						<td>".$team["team_name"]."</td>\n"; // Extract the team_name value from the $team array object
-							$html_data .= "						<td>".substr($complete, 0, strlen($complete)-2)."</td>\n";	// Substring to cut off the last ", "
-							$html_data .= "						<td>".gmdate("H:i:s", $total_time)."</td>\n";
+							$html_data .= "						<td>".$complete_count."/";
+							$html_data .= "$total_time.</td>\n";
 							$html_data .= $table;
 							$html_data .= "					</tr>";
 
