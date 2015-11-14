@@ -141,8 +141,9 @@
 										$total_time += $problem_time;// Then add on to the total team time
 									}
 								}
-								$table .= "						<td>".$num_submissions."/".$problem_time."</td>\n";
+								$table .= "						<td>".$num_submissions."/".($problem_time===0 ? "--" : $problem_time)."</td>\n";
 							}
+							$html_data .= "						<td>place holder rank</td>\n";
 							$html_data .= "						<td>".$team["team_name"]."</td>\n"; // Extract the team_name value from the $team array object
 							$html_data .= "						<td>".$complete_count."</td>\n";
 							$html_data .= "						<td>"$total_time."</td>\n";
@@ -189,12 +190,15 @@
 							$newGroup->teams = $group;
 							array_push($AllGroupOfTeams, $newGroup);
 						}
-						
+
+						$rank = 1; // Easiest way to change working code
+
 						// Go through each GroupOfTeams, order its data from smallest to largest time, and then echo their html_data
 						foreach ($AllGroupOfTeams as $group) {
 							$orderedGroup = $group->order($group->teams);
 							foreach ($orderedGroup as $team) {
-								echo $team->html_data;
+							  //next line - possibly "".$rank++ instead of $rank++
+								echo str_replace("place holder rank", $rank++, $team->html_data);
 							}
 						}
 						
