@@ -28,7 +28,7 @@ class ThreadGrader(threading.Thread):
       Values for result:
         0: not graded
         1: good(complete)
-        1: formatting error
+        2: formatting error
         3: compile error
         4: no main class found
         5: run time error
