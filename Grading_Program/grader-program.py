@@ -8,7 +8,7 @@ from configparser import ConfigParser
 
 def time(s):
   try:
-    if re.search('\\d\\d:\\d\\d', s):
+    if re.search('^\\d\\d:\\d\\d$', s):
       return datetime.strptime(date.today().isoformat()+s+':00',
                                '%Y-%m-%d%H:%M:%S')
     else:
