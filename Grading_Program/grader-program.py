@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 import main
-import sys, re
+import sys, re, os
 import argparse
 from datetime import datetime, date
 from configparser import ConfigParser
 
 def time(s):
   try:
-    if re.search('\\d\\d:\\d\\d', s):
+    if re.search('^\\d\\d:\\d\\d$', s):
       return datetime.strptime(date.today().isoformat()+s+':00',
                                '%Y-%m-%d%H:%M:%S')
     else:
@@ -43,8 +43,8 @@ def read_db_config(filename='config.ini', section='mysql'):
 if __name__ == '__main__':
   #read arguments from command line
   parser = argparse.ArgumentParser(description=__doc__)
-  parser  .add_argument('-c', '--config',              default=None,                         help='config file')
-  parser  .add_argument('-e', '--end-time',            default='16:00',     type=time, help='time when cometition ends, format HH:MM[:SS]')
+  parser  .add_argument('-c', '--config',              default='conf.ini',                   help='config file')
+  parser  .add_argument('-e', '--end-time',            default='16:00',        type=time,    help='time when cometition ends, format HH:MM[:SS]')
   parser  .add_argument('-i', '--host',                default='localhost',                  help='url of mysql server')
   parser  .add_argument('-u', '--username',            default='root',                       help='username to mysql server')
   parser  .add_argument('-p', '--password',            default='password',                   help='password to mysql server')
@@ -56,8 +56,11 @@ if __name__ == '__main__':
 
   args = vars(parser.parse_args())
 
-  if args['config']:
+  #print(args['config'])
+  if os.path.exists(args['config']):
     args.update(read_db_config(args['config'], 'grader'))
+    args.update(read_db_config(args['config'], 'mysql'))
+    #print('using conf')
 
   if type(args['end_time']) == str:
     try:

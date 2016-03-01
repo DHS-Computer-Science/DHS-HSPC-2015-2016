@@ -22,27 +22,29 @@ def main(args):
       'user'    : args['username'],
       'password': args['password'],
       'host'    : args['host'],
-      'database': args['database']
+      'database': args['database'],
+      'buffered': True
     }
-
-    cnx = mysql.connector.connect(conf)
-  except Error as e:
+    print(conf)
+    cnx = mysql.connector.connect(**conf)
+  except mysql.connector.Error as e:
     print(e)
 
   #file watcher
   observer = Observer()
-  observer.schedule(SubmissionWatcher(cnx), path=args['submission'])
+  observer.schedule(SubmissionWatcher(cnx, args['table'], q), path=args['submission'])
   observer.start()
 
   #grader manager
   grade_manager = ThreadGrader(q, cnx, done,
-                               arg['table'],
-                               args['problems'])
+                               args['table'],
+                               args['problems'],
+                               archive_dir=args['archive'])
   grade_manager.setDaemon(True) #do not exit until all things needed
   grade_manager.start()         #  to be graded are graded, and start it
 
   #TODO - istatiate/start GUI
-  app = App(observer, q, done, args['end_time'])
+  app = App(observer, q, done, args['end_time'], grade_manager)
   app.mainloop()
 
   #close mysql
