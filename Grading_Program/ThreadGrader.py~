@@ -102,7 +102,7 @@ class ThreadGrader(threading.Thread):
       zipper.write(info_file, arcname='info.xml')
       zipper.close()
 
-      print('result ' + result)
+      print('result ' + result)s
 
       #delete
       os.remove(file_name)#original archive(new one is in archive_dir)

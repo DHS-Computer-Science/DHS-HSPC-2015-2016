@@ -100,7 +100,7 @@ def main(args):
     h   = int(sec / 3600)
     m   = int(sec / 60) % 60
     s   = int(sec % 60)
-    print('\r{:02}:{:02}:{:02} > {}'.format(h, m, s, p.command), end='')
+    print('\r{:02}:{:02}:{:02} > {}'.format(h, m, s, p.command))
     time.sleep(0.1)
 
   #end watchdog

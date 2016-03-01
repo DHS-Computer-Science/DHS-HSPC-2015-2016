@@ -8,5 +8,5 @@
   submission  = /opt/lampp/submissions
   problems    = /dhs-hspc/problems
   end-time    = 16:00
-  table       = test
+  table       = submissions
   archive     = /dhs-hspc/archive
