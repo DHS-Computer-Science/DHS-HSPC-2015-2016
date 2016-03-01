@@ -31,13 +31,14 @@ def main(args):
 
   #file watcher
   observer = Observer()
-  observer.schedule(SubmissionWatcher(cnx, args['table']), path=args['submission'])
+  observer.schedule(SubmissionWatcher(cnx, args['table'], q), path=args['submission'])
   observer.start()
 
   #grader manager
   grade_manager = ThreadGrader(q, cnx, done,
                                args['table'],
-                               args['problems'])
+                               args['problems'],
+                               archive_dir=args['archive'])
   grade_manager.setDaemon(True) #do not exit until all things needed
   grade_manager.start()         #  to be graded are graded, and start it
 

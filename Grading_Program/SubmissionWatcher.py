@@ -9,10 +9,11 @@ class SubmissionWatcher(PatternMatchingEventHandler):
   patterns = ["*.zip"]
   staging_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-  def __init__(self, sql, table):
+  def __init__(self, sql, table, q):
     PatternMatchingEventHandler.__init__(self)
     self.cursor = sql.cursor()
     self.table  = table
+    self.queue  = q
 
   def on_created(self, event):
     #self.process(event)
@@ -31,12 +32,17 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     for row in self.cursor:
       info.update(dict(zip(columns, row)))
 
+    print(info)
+    print("SELECT team_name FROM teams WHERE team_id = \'{}\'".format(info['team_id']))
     self.cursor.execute("SELECT team_name FROM teams WHERE team_id = \'{}\'".format(info['team_id']))
     columns = tuple([d[0] for d in self.cursor.description])
     info.update(dict(zip(columns, row)))
+
+    for fow in self.cursor:
+      pass # do nothing
 
     self.cursor.execute("SELECT * FROM {} WHERE (problem_id = \'{}\' AND team_id = \'{}\')".format(self.table, info['problem_id'], info['team_id']))
     for row in self.cursor:
       info['attempts'] += 1
 
-    queue.put((path_name, info))
+    self.queue.put((path_name, info))

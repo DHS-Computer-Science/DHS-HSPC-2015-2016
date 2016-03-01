@@ -4,6 +4,7 @@ import shutil
 import zipfile
 import threading
 import tempfile
+from Grader import Grader
 import mysql.connector
 
 class ThreadGrader(threading.Thread):
@@ -16,14 +17,14 @@ class ThreadGrader(threading.Thread):
     self.archive_dir = archive_dir
     self.problem_dir = problem_dir
     self.cursor      = sql.cursor()
-
+    self.done        = done
   def run(self):
     while True:
       #grabs job from queue
       file_name, info = self.queue.get()
-
-      submission = Grader(file_name, problem_dir, info['problem_id'])
-
+ 
+      submission = Grader(file_name, self.problem_dir, info['problem_id'])
+      
       '''
       Values for result:
         0: not graded
@@ -57,12 +58,13 @@ class ThreadGrader(threading.Thread):
       else:
         result = 4 #main not found
 
-      archive_name = '{team_id}_{problem_id}_{attempt}.zip'.fromat(
+
+      archive_name = '{team_id}_{problem_id}_{attempt}.zip'.format(
                       team_id=info['team_id'],
                       problem_id=info['problem_id'],
                       attempt=info['attempts'])
       archive_name = os.path.join(self.archive_dir, archive_name)
-      info_file    = tempfile.mkstemp()
+      info_file    = tempfile.mkstemp()[1]
       with open(info_file, 'w') as f:
         f.write(xml.format(team_name=info['team_name'],
                            team_id=info['team_id'],
@@ -70,16 +72,18 @@ class ThreadGrader(threading.Thread):
                            attempt=info['attempts'],
                            grade_code=result,
                            grade_message=messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)',
-                           submission_time=info['submission_time']))
+                           submission_time=info['time']))
 
+      
       zipper = zipfile.ZipFile(archive_name, 'w',zipfile.ZIP_DEFLATED)
       for root, dirs, files in os.walk(submission.get_dir()):
-        zipper.write(os.path.join(root, file), arcname=file)
+        for file in files:
+          zipper.write(os.path.join(root, file), arcname=file)
       zipper.write(info_file, arcname='info.xml')
       zipper.close()
 
       info['result'] = result
-      done.append(info)
+      self.done.append(info)
 
       #delete
       os.remove(file_name)#original archive(new one is in archive_dir)
@@ -87,7 +91,7 @@ class ThreadGrader(threading.Thread):
       shutil.rmtree(submission.get_dir())#grading dir(already in new archive)
 
       #updates results into 'graded' column of /table/
-      cursor.execute('UPDATE %s SET graded=%d WHERE name=%s', (self.table, result, basename))
+      self.cursor.execute('UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''.format(self.table, result, info['submission_name'].decode('utf-8')))
 
       #signals to queue job is done
       self.queue.task_done()

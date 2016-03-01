@@ -2,14 +2,15 @@ import subprocess
 import tempfile
 import zipfile
 import fnmatch
-import os
+import time
+import os, re
 
 class Grader:
   def __init__(self, path_to_zip, test_dir, num):
     #the file that will be compared against
-    self.test_output = '{test}/{num}/output'.format(test=test_dir, num=num)
+    self.test_output = '{test}/{num:02}/output'.format(test=test_dir, num=num)
     #the input file
-    self.test_input  = '{test}/{num}/input'.format(test=test_dir, num=num)
+    self.test_input  = '{test}/{num:02}/input'.format(test=test_dir, num=num)
     #the file where the output will be writen
     self.outfile     = ''
 
@@ -37,7 +38,7 @@ class Grader:
   def compile(self):
     mycmd = ['javac', self.main_class]
     tester = subprocess.Popen(mycmd)
-    while p.poll() is None:
+    while tester.poll() is None:
       time.sleep(1)
     return tester.returncode == 0
 
@@ -47,7 +48,7 @@ class Grader:
     False: not
   '''
   def extract_info(self):
-    self.outfile = os.join(self.submission_dir, 'output')
+    self.outfile = os.path.join(self.submission_dir, 'output')
 
     #find main java file
     for root, dirs, files in os.walk(self.submission_dir):
@@ -67,7 +68,7 @@ class Grader:
     False: baad
   '''
   def compare(self):
-    status = 6
+    status = 7
     with open(self.outfile, 'r') as user, \
          open(self.test_output, 'r') as test:
       u_out   = user.read().replace('\r', '\r')
@@ -80,7 +81,7 @@ class Grader:
       status = 2
     return status
 
-  def get_dir():
+  def get_dir(self):
     return self.submission_dir
 
   '''
@@ -96,24 +97,24 @@ class Grader:
     other: very very bad error
   '''
   def run(self):
-    mycmd = ['java', re.sub('(?i)\\.java$', '', self.main_class)]
+    mycmd = ['java', '-classpath', re.sub('(?i)(.*)[\\\\/].*?\\.java$', '\\1', self.main_class), re.sub('(?i).*[\\\\/](.*?)\\.java$', '\\1', self.main_class)]
     try:
       with open(self.outfile, 'w') as outfile, \
            open(self.test_input, 'r') as infile:
         start  = time.time()
         tester = subprocess.Popen(mycmd, stdin=infile, stdout=outfile)
-        while p.poll() is None:
-          if (time.time() - start) < 60:
-            p.kill()
-            return 5
+        while tester.poll() is None:
+          if (time.time() - start) > 60:
+            tester.kill()
+            return 6
           time.sleep(0.5)
       if tester.returncode != 0:
-        return 4
+        return 5
       else:
         return self.compare() #change it if you don't like it
     except IOError as e:
       #Should not happen, I think
       #Note I should watch my language in school related projects
       #  but then again, who's gonna read this?
-      print('Error: %s'.format(e.strerror))
-      return 7
+      print('Error: {}'.format(e.strerror))
+      return 9999
