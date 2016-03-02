@@ -20,7 +20,7 @@ class Table(Frame):
     Frame.__init__(self, root)
     self.scrollbar = Scrollbar(self)
     self.scrollbar.pack(side=RIGHT, fill=Y)
-    self.lbox = Listbox(self, yscrollcommand=self.scrollbar.set)
+    self.lbox = Listbox(self, yscrollcommand=self.scrollbar.set, width=28)
     self.lbox.pack(side=LEFT)
     self.scrollbar.config(command=self.lbox.yview)
 
@@ -30,14 +30,15 @@ class Table(Frame):
       self.lbox.insert(END, i)
 
 class App:
-  def __init__(self, observer, queue, done, end):
+  def __init__(self, observer, queue, done, end, g):
     self.queue    = queue
     self.observer = observer
     self.done     = done
     self.end      = end
+    self.grader   = g
     self.root = Tk()
     self.root.wm_title("DHS-HSPC Grader")
-    self.root.geometry("520x300+300+300")
+    self.root.geometry("688x280+200+200")
     self.root.bind_class("Text",  "<Control-a>", self.display_selectall)
     self.root.bind_class("Entry", "<Control-a>", self.entry_selectall)
 
@@ -59,7 +60,14 @@ class App:
     self.timer_text  = StringVar()
     self.timer_text.set('Time Remaining: 00:00:00')
     self.timer_label = Label(self.mainframe, textvariable=self.timer_text)
-    self.timer_label.grid(row=0, column=3)
+    self.timer_label.grid(row=0, column=1, columnspan=3)
+
+    self.grader_text  = StringVar()
+    self.grader_text.set('Waiting')
+    self.grader_label = Label(self.mainframe,
+                              width=25,
+                              textvariable=self.grader_text)
+    self.grader_label.grid(row=2, column=3)
 
     self.time_frame = Frame(self.mainframe)
     self.time_frame.grid(row=6, column=0)
@@ -95,13 +103,13 @@ class App:
 
   def update(self):
     queued_item = [i[0] for i in self.queue.queue]
-    tmp = ['{} - {}({})'.format(i['team_name'], i['problem_id'],
-                                i['attempts']) for i in queued_item]
-    self.queue_table.update(tmp)
+    tmp = ['{:-24} {:02} ({:03})'.format(i['team_name'], i['problem_id'],
+                                         i['attempts']) for i in queued_item]
+    self.queue_table.update(['name                     p# (sbm)']+tmp)
 
-    tmp = ['{} - {}({}): {}'.format(i['team_name'], i['problem_id'],
+    tmp = ['{:-24} {:02} ({:03}):   {}'.format(i['team_name'], i['problem_id'],
                                 i['attempts'],  i['result']) for i in self.done]
-    self.done_table.update(tmp)
+    self.done_table.update(['name                     p# (sbm): grade']+tmp)
 
     if self.end < datetime.datetime.now():
       h = 0
@@ -117,6 +125,11 @@ class App:
 
     self.timer_text.set('Time Remaining: {:02}:{:02}:{:02}'.format(h, m, s))
 
+    if self.grader and self.grader.status():
+      self.grader_text.set('Grading\n'+self.grader.status())
+    else:
+      self.grader_text.set('Waiting')
+
     self.root.after(500, self.update)
 
   def mainloop(self):
@@ -124,12 +137,12 @@ class App:
 
   def quit(self):
     self.root.quit()
-'''
+
 obs = None
 q = queue.Queue()
 done = []
-end = datetime.datetime.strptime(datetime.date.today().isoformat()+'14:00:00', '%Y-%m-%d%H:%M:%S')
-app = App(obs, q, done, end)
+g = None
+end = datetime.datetime.strptime(datetime.date.today().isoformat()+'23:00:00', '%Y-%m-%d%H:%M:%S')
+app = App(obs, q, done, end, g)
 app.mainloop()
 print('I got Here')
-'''

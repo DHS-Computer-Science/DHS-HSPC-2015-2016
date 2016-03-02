@@ -18,13 +18,22 @@ class ThreadGrader(threading.Thread):
     self.problem_dir = problem_dir
     self.cursor      = sql.cursor()
     self.done        = done
+    self.description = None
+
+  def status(self):
+    return self.description
+
   def run(self):
     while True:
       #grabs job from queue
       file_name, info = self.queue.get()
- 
+
+      self.description = '{:-24} {:02} ({:03})'.format(info['team_name'],
+                                                       info['problem_id'],
+                                                       info['attempts'])
+
       submission = Grader(file_name, self.problem_dir, info['problem_id'])
-      
+
       '''
       Values for result:
         0: not graded
@@ -74,7 +83,7 @@ class ThreadGrader(threading.Thread):
                            grade_message=messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)',
                            submission_time=info['time']))
 
-      
+
       zipper = zipfile.ZipFile(archive_name, 'w',zipfile.ZIP_DEFLATED)
       for root, dirs, files in os.walk(submission.get_dir()):
         for file in files:
@@ -95,3 +104,4 @@ class ThreadGrader(threading.Thread):
 
       #signals to queue job is done
       self.queue.task_done()
+      self.description = None

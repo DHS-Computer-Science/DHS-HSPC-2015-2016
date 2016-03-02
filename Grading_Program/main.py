@@ -43,7 +43,7 @@ def main(args):
   grade_manager.start()         #  to be graded are graded, and start it
 
   #TODO - istatiate/start GUI
-  app = App(observer, q, done, args['end_time'])
+  app = App(observer, q, done, args['end_time'], grade_manager)
   app.mainloop()
 
   #close mysql
