@@ -104,7 +104,6 @@ class ThreadGrader(threading.Thread):
       self.cursor.execute('UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''.format(self.table, result, info['submission_name'].decode('utf-8')))
 
       self.cursor.close()
-      self.sql.commit()
       #signals to queue job is done
       self.queue.task_done()
       self.description = None

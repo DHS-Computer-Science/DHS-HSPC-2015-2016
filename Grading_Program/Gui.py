@@ -138,6 +138,7 @@ class App:
   def quit(self):
     self.root.quit()
 
+'''
 obs = None
 q = queue.Queue()
 done = []
@@ -146,3 +147,4 @@ end = datetime.datetime.strptime(datetime.date.today().isoformat()+'23:00:00', '
 app = App(obs, q, done, end, g)
 app.mainloop()
 print('I got Here')
+'''
