@@ -41,7 +41,7 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     columns = tuple([d[0] for d in self.cursor.description])
     info.update(dict(zip(columns, row)))
 
-    for fow in self.cursor:
+    for row in self.cursor:
       pass # do nothing
 
     self.cursor.execute("SELECT * FROM {} WHERE (problem_id = \'{}\' AND team_id = \'{}\')".format(self.table, info['problem_id'], info['team_id']))

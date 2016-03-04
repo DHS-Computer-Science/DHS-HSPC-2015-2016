@@ -22,8 +22,7 @@ def main(args):
       'user'    : args['username'],
       'password': args['password'],
       'host'    : args['host'],
-      'database': args['database'],
-      'buffered': True
+      'database': args['database']
     }
     print(conf)
     cnx = mysql.connector.connect(**conf)

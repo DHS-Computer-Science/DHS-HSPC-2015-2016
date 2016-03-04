@@ -16,7 +16,7 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     self.queue  = q
 
   def on_created(self, event):
-		self.cursor = self.sql.cursor()
+    self.cursor = self.sql.cursor()
     #self.process(event)
     file_name = os.path.basename(event.src_path)
     path_name = os.path.join(self.staging_dir, file_name)
