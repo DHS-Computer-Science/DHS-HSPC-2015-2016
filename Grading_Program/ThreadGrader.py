@@ -5,6 +5,7 @@ import zipfile
 import threading
 import tempfile
 from Grader import Grader
+import subprocess
 import mysql.connector
 
 class ThreadGrader(threading.Thread):
@@ -102,6 +103,18 @@ class ThreadGrader(threading.Thread):
       self.cursor = self.sql.cursor()
       #updates results into 'graded' column of /table/
       self.cursor.execute('UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''.format(self.table, result, info['submission_name'].decode('utf-8')))
+
+      command = 'notify.sh {} {}'.format(info['problem_id'], info['result'])
+
+      if 'ip' in info.keys() and info['ip']:
+        ssh = subprocess.Popen(["ssh", '-i', 'client_rsa', 'guest@'+info['ip'], command],
+                       shell=False,
+                       stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE)
+      else:
+       print('Please tell team \"{}\" that the result for problem {} is: {}'.format(info['team_name'],
+                                                                                    info['problem_id'],
+                               messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)'))
 
       self.cursor.close()
       self.sql.commit()
