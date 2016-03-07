@@ -61,7 +61,7 @@ class Grader:
     team_id        = -1 #place holder for errors
 
     return self.main_class != ''
-    
+
   '''
   outputs:
     True:  good
@@ -97,7 +97,10 @@ class Grader:
     other: very very bad error
   '''
   def run(self):
-    mycmd = ['java', '-classpath', re.sub('(?i)(.*)[\\\\/].*?\\.java$', '\\1', self.main_class), re.sub('(?i).*[\\\\/](.*?)\\.java$', '\\1', self.main_class)]
+    mycmd = ['java',
+             '-classpath',
+             re.sub('(?i)(.*)[\\\\/].*?\\.java$', '\\1', self.main_class),
+             re.sub('(?i).*[\\\\/](.*?)\\.java$', '\\1', self.main_class)]
     try:
       with open(self.outfile, 'w') as outfile, \
            open(self.test_input, 'r') as infile:

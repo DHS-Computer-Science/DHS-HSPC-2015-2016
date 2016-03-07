@@ -9,11 +9,12 @@ class SubmissionWatcher(PatternMatchingEventHandler):
   patterns = ["*.zip"]
   staging_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-  def __init__(self, sql, table, q):
+  def __init__(self, sql, args, q):
     PatternMatchingEventHandler.__init__(self)
-    self.sql    = sql
-    self.table  = table
-    self.queue  = q
+    self.sql        = sql
+    self.subs_table = args['subs_table']
+    self.team_table = args['team_table']
+    self.queue      = q
 
   def __del__(self):
     while os.listdir(self.staging_dir):
@@ -32,26 +33,24 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     basename   = re.search('(.{8})\\.zip$', file_name).group(1)
 
     info = {'attempts':0}
+    query = 'SELECT * FROM {} WHERE submission_name = \'{}\''
     while len(info) == 1:
-      self.cursor.execute("SELECT * FROM {} WHERE submission_name = \'{}\'".format(self.table, basename))
+      self.cursor.execute(query.format(self.table, basename))
       time.sleep(2)
-      columns = tuple([d[0] for d in self.cursor.description])
       for row in self.cursor:
-        info.update(dict(zip(columns, row)))
+        info.update(dict(zip(cursor.column_names, row)))
 
-    #print(info)
-    #print("SELECT team_name FROM teams WHERE team_id = \'{}\'".format(info['team_id']))
-
-    self.cursor.execute("SELECT team_name FROM teams WHERE team_id = \'{}\'".format(info['team_id']))
-    columns = tuple([d[0] for d in self.cursor.description])
+    query = 'SELECT team_name FROM {} WHERE team_id = \'{}\''
+    self.cursor.execute(query.format(self.team_table, info['team_id']))
     for row in self.cursor:
-      info.update(dict(zip(columns, row)))
+      info['team_name'] = row[0]
 
-    for row in self.cursor:
-      pass # do nothing
+    query = 'SELECT * FROM {}' \
+            'WHERE (problem_id = \'{}\' AND team_id = \'{}\' AND time < \'{}\')"
+    self.cursor.execute(query.format(self.subs_table, info['problem_id'],
+                                     info['team_id'], info['time']))
 
-    self.cursor.execute("SELECT * FROM {} WHERE (problem_id = \'{}\' AND team_id = \'{}\' AND time <= \'{}\')".format(self.table, info['problem_id'], info['team_id'], info['time']))
-    for row in self.cursor:
-      info['attempts'] += 1
+    info['attempts'] = cursor._rowcount+1
+
     self.cursor.close()
     self.queue.put((path_name, info))

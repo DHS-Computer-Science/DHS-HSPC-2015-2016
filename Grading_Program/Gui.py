@@ -103,11 +103,11 @@ class App:
 
   def update(self):
     queued_item = [i[0] for i in self.queue.queue]
-    tmp = ['{:-24} {:02} ({:03})'.format(i['team_name'], i['problem_id'],
+    tmp = ['{:24} {:02} ({:03})'.format(i['team_name'], i['problem_id'],
                                          i['attempts']) for i in queued_item]
     self.queue_table.update(['name                     p# (sbm)']+tmp)
 
-    tmp = ['{:-24} {:02} ({:03}):   {}'.format(i['team_name'], i['problem_id'],
+    tmp = ['{:24} {:02} ({:03}):   {}'.format(i['team_name'], i['problem_id'],
                                 i['attempts'],  i['result']) for i in self.done]
     self.done_table.update(['name                     p# (sbm): grade']+tmp)
 
@@ -143,7 +143,8 @@ obs = None
 q = queue.Queue()
 done = []
 g = None
-end = datetime.datetime.strptime(datetime.date.today().isoformat()+'23:00:00', '%Y-%m-%d%H:%M:%S')
+end = datetime.datetime.strptime(datetime.date.today().isoformat()+'23:00:00',
+                                 '%Y-%m-%d%H:%M:%S')
 app = App(obs, q, done, end, g)
 app.mainloop()
 print('I got Here')

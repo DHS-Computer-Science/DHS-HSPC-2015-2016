@@ -10,13 +10,12 @@ import mysql.connector
 
 class ThreadGrader(threading.Thread):
   """Threaded Url Grab"""
-  def __init__(self, q, sql, done, table='submissions',
-               problem_dir='/problems', archive_dir='/archive'):
+  def __init__(self, q, sql, done, args):
     threading.Thread.__init__(self)
     self.queue       = q
-    self.table       = table
-    self.archive_dir = archive_dir
-    self.problem_dir = problem_dir
+    self.subs_table  = args['subs_table']
+    self.archive_dir = args['archive_dir']
+    self.problem_dir = args['problems_dir']
     self.sql         = sql
     self.done        = done
     self.description = None
@@ -81,7 +80,8 @@ class ThreadGrader(threading.Thread):
                            problem_id=info['problem_id'],
                            attempt=info['attempts'],
                            grade_code=result,
-                           grade_message=messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)',
+                           grade_message=messages[result] if result < 8 and \
+                             result > 0 else 'Unknown ERROR(bad)',
                            submission_time=info['time']))
 
 
@@ -102,19 +102,23 @@ class ThreadGrader(threading.Thread):
 
       self.cursor = self.sql.cursor()
       #updates results into 'graded' column of /table/
-      self.cursor.execute('UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''.format(self.table, result, info['submission_name'].decode('utf-8')))
+      query = 'UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''
+      self.cursor.execute(query.format(self.subs_table, result,
+                                       info['submission_name'].decode('utf-8')))
 
       command = 'notify.sh {} {}'.format(info['problem_id'], info['result'])
 
       if 'submission_ip' in info.keys() and info['submission_ip']:
-        ssh = subprocess.Popen(["ssh", '-i', 'client_rsa', 'guest@'+info['submission_ip'], command],
-                       shell=False,
-                       stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE)
+        ssh = subprocess.Popen(["ssh", '-i', 'client_rsa',
+                               'guest@'+info['submission_ip'], command],
+                               shell=False,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
       else:
-       print('Please tell team \"{}\" that the result for problem {} is: {}'.format(info['team_name'],
-                                                                                    info['problem_id'],
-                               messages[result] if result < 8 and result > 0 else 'Unknown ERROR(bad)'))
+        message= 'Please tell team \"{}\" that the result for problem {} is: {}'
+        print(message.format(info['team_name'], info['problem_id'],
+                             messages[result] if result < 8 and result > 0 \
+                                              else 'Unknown ERROR(bad)'))
 
       self.cursor.close()
       self.sql.commit()

@@ -17,39 +17,32 @@ def main(args):
   done = []
 
   #connect to mysql server
-  try:
-    conf = {
-      'user'    : args['username'],
-      'password': args['password'],
-      'host'    : args['host'],
-      'database': args['database'],
-      'buffered': True
-    }
-    print(conf)
-    cnx = mysql.connector.connect(**conf)
-  except mysql.connector.Error as e:
-    print(e)
+  conf = {
+    'user'    : args['username'],
+    'password': args['password'],
+    'host'    : args['host'],
+    'database': args['database'],
+    'buffered': True
+  }
+  cnx = mysql.connector.connect(**conf)
 
   #file watcher
   observer = Observer()
-  observer.schedule(SubmissionWatcher(cnx, args['table'], q), path=args['submission'])
+  observer.schedule(SubmissionWatcher(cnx,args,q), path=args['submission_dir'])
   observer.start()
 
   #grader manager
-  grade_manager = ThreadGrader(q, cnx, done,
-                               args['table'],
-                               args['problems'],
-                               archive_dir=args['archive'])
+  grade_manager = ThreadGrader(q, cnx, done, args)
   grade_manager.setDaemon(True) #do not exit until all things needed
   grade_manager.start()         #  to be graded are graded, and start it
 
-  #TODO - istatiate/start GUI
+  #TODO - instatiate/start GUI
   app = App(observer, q, done, args['end_time'], grade_manager)
   app.mainloop()
 
   #close mysql
   cnx.close()
 
-  #end watchdog
+  #end watchdog - stop watching files apear in submission dir
   observer.stop()
   observer.join()
