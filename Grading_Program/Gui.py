@@ -4,8 +4,12 @@ import queue, datetime, re
 
 try:
   from tkinter import *
+  from tkinter.ttk import *
+  import tkinter.font as tkFont
 except:
   from Tkinter import *
+  import Tkinter.font as tkFont
+  from Tkinter.ttk import *
 
 def time(s):
   if re.search('^\\d\\d:\\d\\d$', s):
@@ -15,19 +19,69 @@ def time(s):
     return datetime.datetime.strptime(datetime.date.today().isoformat()+s,
                              '%Y-%m-%d%H:%M:%S')
 
-class Table(Frame):
-  def __init__(self, root):
-    Frame.__init__(self, root)
-    self.scrollbar = Scrollbar(self)
-    self.scrollbar.pack(side=RIGHT, fill=Y)
-    self.lbox = Listbox(self, yscrollcommand=self.scrollbar.set, width=28)
-    self.lbox.pack(side=LEFT)
-    self.scrollbar.config(command=self.lbox.yview)
+class MultiColumnListbox(Frame):
+  """use a TreeView as a multicolumn ListBox"""
 
-  def update(self, info_list):
-    self.lbox.delete(0, END)
-    for i in info_list:
-      self.lbox.insert(END, i)
+  def __init__(self, root, header):
+    Frame.__init__(self, root)
+    self.tree      = None
+    self.header    = header
+    self.info_list = []
+    self._setup_widgets()
+    self._build_tree()
+
+  def _setup_widgets(self):
+    s = """\click on header to sort by that column
+to change width of column drag boundary
+    """
+    # create a treeview with dual scrollbars
+    self.tree = Treeview(self, columns=self.header, show="headings")
+    vsb = Scrollbar(self, orient="vertical",
+                          command=self.tree.yview)
+    hsb = Scrollbar(self, orient="horizontal",
+                          command=self.tree.xview)
+    self.tree.configure(yscrollcommand=vsb.set,
+                        xscrollcommand=hsb.set)
+    self.tree.grid(column=0, row=0, sticky='nsew')
+    vsb.grid(column=1, row=0, sticky='ns')
+    hsb.grid(column=0, row=1, sticky='ew')
+    self.grid_columnconfigure(0, weight=1)
+    self.grid_rowconfigure(0, weight=1)
+
+  def update(self, new_list):
+    self.info_list = new_list
+    self._build_tree()
+
+  def _build_tree(self):
+    for col in self.header:
+      self.tree.heading(col, text=col.title(),
+        command=lambda c=col: sortby(self.tree, c, 0))
+      # adjust the column's width to the header string
+      self.tree.column(col,
+        width=tkFont.Font().measure(col.title()))
+
+    for item in self.info_list:
+      self.tree.insert('', 'end', values=item)
+      # adjust column's width if necessary to fit each value
+      for ix, val in enumerate(item):
+        col_w = tkFont.Font().measure(val)
+        if self.tree.column(self.header[ix],width=None)<col_w:
+          self.tree.column(self.header[ix], width=col_w)
+
+  def sortby(tree, col, descending):
+    """sort tree contents when a column header is clicked on"""
+    # grab values to sort
+    data = [(tree.set(child, col), child) \
+      for child in tree.get_children('')]
+    # if the data to be sorted is numeric change to float
+    #data =  change_numeric(data)
+    # now sort the data in place
+    data.sort(reverse=descending)
+    for ix, item in enumerate(data):
+      tree.move(item[1], '', ix)
+    # switch the heading so it will sort in the opposite direction
+    tree.heading(col, command=lambda col=col: sortby(tree, col, \
+      int(not descending)))
 
 class App:
   def __init__(self, observer, queue, done, end, g):
@@ -38,7 +92,7 @@ class App:
     self.grader   = g
     self.root = Tk()
     self.root.wm_title("DHS-HSPC Grader")
-    self.root.geometry("688x280+200+200")
+    self.root.geometry("888x304+200+200")
     self.root.bind_class("Text",  "<Control-a>", self.display_selectall)
     self.root.bind_class("Entry", "<Control-a>", self.entry_selectall)
 
@@ -47,10 +101,11 @@ class App:
     self.mainframe.columnconfigure(0, weight=1)
     self.mainframe.rowconfigure(0, weight=1)
 
-    self.queue_table = Table(self.mainframe)
+    header = ['Team Name', 'Problem Number', 'Attempt', 'Grade']
+    self.queue_table = MultiColumnListbox(self.mainframe, header[:3])
     self.queue_table.grid(row=1, column=0, rowspan=5)
 
-    self.done_table = Table(self.mainframe)
+    self.done_table = MultiColumnListbox(self.mainframe, header)
     self.done_table.grid(row=1, column=4, rowspan=5)
 
     self.btn1 = Button(self.mainframe, text="Stop",
@@ -64,8 +119,7 @@ class App:
 
     self.grader_text  = StringVar()
     self.grader_text.set('Waiting')
-    self.grader_label = Label(self.mainframe,
-                              width=25,
+    self.grader_label = Label(self.mainframe, width=25, anchor='center',
                               textvariable=self.grader_text)
     self.grader_label.grid(row=2, column=3)
 
@@ -105,11 +159,11 @@ class App:
     queued_item = [i[0] for i in self.queue.queue]
     tmp = ['{:24} {:02} ({:03})'.format(i['team_name'], i['problem_id'],
                                          i['attempts']) for i in queued_item]
-    self.queue_table.update(['name                     p# (sbm)']+tmp)
+    self.queue_table.update(tmp)
 
     tmp = ['{:24} {:02} ({:03}):   {}'.format(i['team_name'], i['problem_id'],
                                 i['attempts'],  i['result']) for i in self.done]
-    self.done_table.update(['name                     p# (sbm): grade']+tmp)
+    self.done_table.update(tmp)
 
     if self.end < datetime.datetime.now():
       h = 0
