@@ -53,6 +53,7 @@ to change width of column drag boundary
     self._build_tree()
 
   def _build_tree(self):
+    self.tree.delete(*self.tree.get_children())
     for col in self.header:
       self.tree.heading(col, text=col.title(),
         command=lambda c=col: sortby(self.tree, c, 0))
@@ -92,7 +93,7 @@ class App:
     self.grader   = g
     self.root = Tk()
     self.root.wm_title("DHS-HSPC Grader")
-    self.root.geometry("888x304+200+200")
+    self.root.geometry("900x304+200+200")
     self.root.bind_class("Text",  "<Control-a>", self.display_selectall)
     self.root.bind_class("Entry", "<Control-a>", self.entry_selectall)
 
@@ -117,11 +118,26 @@ class App:
     self.timer_label = Label(self.mainframe, textvariable=self.timer_text)
     self.timer_label.grid(row=0, column=1, columnspan=3)
 
+    self.separator1 = Separator(self.mainframe, orient='horizontal')
+    self.separator1.grid(row=2, column=3, sticky='ew')
+
     self.grader_text  = StringVar()
     self.grader_text.set('Waiting')
     self.grader_label = Label(self.mainframe, width=25, anchor='center',
                               textvariable=self.grader_text)
-    self.grader_label.grid(row=2, column=3)
+    self.grader_label.grid(row=3, column=3)
+
+    self.separator2 = Separator(self.mainframe, orient='horizontal')
+    self.separator2.grid(row=4, column=3, sticky='ew')
+
+    messages = 'Values for result:\n0: not graded\n1: good(complete)\n' \
+               '2: formatting error\n3: compile error\n' \
+               '4: no main class found\n5: run time error\n' \
+               '6: ran for too long\n7: outputs do not match\n' \
+               'other: very very bad error\n'
+
+    self.grade_values = Label(self.mainframe, anchor='center', text=messages)
+    self.grade_values.grid(row=5, column=3)
 
     self.time_frame = Frame(self.mainframe)
     self.time_frame.grid(row=6, column=0)
@@ -156,13 +172,12 @@ class App:
     self.update()
 
   def update(self):
-    queued_item = [i[0] for i in self.queue.queue]
-    tmp = ['{:24} {:02} ({:03})'.format(i['team_name'], i['problem_id'],
-                                         i['attempts']) for i in queued_item]
+    tmp = [(i[1]['team_name'], i[1]['problem_id'],
+            i[1]['attempts']) for i in self.queue.queue]
     self.queue_table.update(tmp)
 
-    tmp = ['{:24} {:02} ({:03}):   {}'.format(i['team_name'], i['problem_id'],
-                                i['attempts'],  i['result']) for i in self.done]
+    tmp = [(i['team_name'], i['problem_id'],
+            i['attempts'],  i['result']) for i in self.done]
     self.done_table.update(tmp)
 
     if self.end < datetime.datetime.now():
@@ -195,7 +210,8 @@ class App:
 '''
 obs = None
 q = queue.Queue()
-done = []
+q.put(('a', {'team_name':'team_1', 'problem_id':3, 'attempts':2}))
+done = [{'team_name':'another team', 'problem_id':2, 'attempts':1, 'result':5}]
 g = None
 end = datetime.datetime.strptime(datetime.date.today().isoformat()+'23:00:00',
                                  '%Y-%m-%d%H:%M:%S')
