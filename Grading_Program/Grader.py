@@ -24,8 +24,8 @@ class Grader:
 
     #remove .class files
     for root, dirs, files in os.walk(self.submission_dir):
-      for file in fnmatch.filter(files, '*.class'):
-        os.remove(os.path.join(root, file))
+      for f in fnmatch.filter(files, '*.[cC][lL][Aa][sS][sS]'):
+        os.remove(os.path.join(root, f))
 
     #the java file which will be run
     self.main_class  = ''
@@ -54,8 +54,14 @@ class Grader:
     for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.java'):
         with open(os.path.join(root, file), 'r') as f:
-          if 'void main(String' in f.read():
-            self.main_class = os.path.join(root, file)
+          source = f.read()
+          tree = javalang.parse.parse(source)
+          for klass in tree.types:
+            if isinstance(klass, javalang.tree.ClassDeclaration):
+              for m in klass.methods:
+                if m.name == 'main' and \
+                   m.modifiers.issuperset({'public', 'static'}):
+                     self.main_class = (root, klass.name)
 
     problem_number = -1 #place holder for errors
     team_id        = -1 #place holder for errors
@@ -99,8 +105,8 @@ class Grader:
   def run(self):
     mycmd = ['java',
              '-classpath',
-             re.sub('(?i)(.*)[\\\\/].*?\\.java$', '\\1', self.main_class),
-             re.sub('(?i).*[\\\\/](.*?)\\.java$', '\\1', self.main_class)]
+             self.main_class[0]),
+             self.main_class[1])]
     try:
       with open(self.outfile, 'w') as outfile, \
            open(self.test_input, 'r') as infile:
