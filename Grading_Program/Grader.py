@@ -76,8 +76,8 @@ class Grader:
 
     if u_out == correct:
       status = 1
-    elif re.sub('[\\s\n]+', '', u_out.lower()) == \
-         re.sub('[\\s\n]+', '', correct.lower()):
+    elif re.sub('([\\s\n:]+|(?:\\d)\\.\\d+)', '', u_out.lower()) == \
+         re.sub('([\\s\n:]+|(?:\\d)\\.\\d+)', '', correct.lower()):
       status = 2
     return status
 
@@ -88,7 +88,7 @@ class Grader:
   Values for result:
     0: not graded
     1: good(complete)
-    1: formatting error
+    2: formatting error
     3: compile error
     4: no main class found
     5: run time error
