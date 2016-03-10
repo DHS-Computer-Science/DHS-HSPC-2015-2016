@@ -1,25 +1,19 @@
 import time, os
 import shutil, re
-import tempfile
 import mysql.connector
 from io import StringIO
 from watchdog.events import PatternMatchingEventHandler
 
 class SubmissionWatcher(PatternMatchingEventHandler):
   patterns = ["*.zip"]
-  staging_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-  def __init__(self, sql, args, q):
+  def __init__(self, sql, args, q, staging_dir):
     PatternMatchingEventHandler.__init__(self)
-    self.sql        = sql
-    self.subs_table = args['subs_table']
-    self.team_table = args['team_table']
-    self.queue      = q
-
-  def __del__(self):
-    while os.listdir(self.staging_dir):
-      time.sleep(4)
-    os.rmdir(self.staging_dir)
+    self.sql         = sql
+    self.subs_table  = args['subs_table']
+    self.team_table  = args['team_table']
+    self.queue       = q
+    self.staging_dir = staging_dir
 
   def on_created(self, event):
     self.cursor = self.sql.cursor()
