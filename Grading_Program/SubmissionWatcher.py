@@ -6,7 +6,7 @@ from io import StringIO
 from watchdog.events import PatternMatchingEventHandler
 
 class SubmissionWatcher(PatternMatchingEventHandler):
-  patterns = ["*.zip"]
+  patterns = ["*"]
   staging_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
   def __init__(self, sql, args, q):
@@ -22,6 +22,8 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     os.rmdir(self.staging_dir)
 
   def on_created(self, event):
+    if not event.is_directory:
+      return
     self.cursor = self.sql.cursor()
     #self.process(event)
     file_name = os.path.basename(event.src_path)

@@ -96,8 +96,8 @@ class ThreadGrader(threading.Thread):
       self.done.append(info)
 
       #delete
-      os.remove(file_name)#original archive(new one is in archive_dir)
       os.remove(info_file)#info file(inside of new archive)
+      shutil.rmtree(file_name)#original submission(graded copy is in archive_dir)
       shutil.rmtree(submission.get_dir())#grading dir(already in new archive)
 
       self.cursor = self.sql.cursor()
