@@ -162,11 +162,14 @@ class App:
 
   def clicked(self, button):
     if 'stop' in button.lower():
+      self.end = datetime.datetime.now()
       self.observer.stop()
       self.observer.join()
     elif 'time' in button.lower():
       try:
-        self.end = time(self.time_input.get())
+        tmp = time(self.time_input.get())
+        if self.end > datetime.datetime.now()
+          self.end = tmp
       except ValueError:
         print("please go back to 1st grade and learn how to represent time")
     self.update()
@@ -205,6 +208,10 @@ class App:
     self.root.mainloop()
 
   def quit(self):
+    if not self.queue.empty() or (self.grader and self.grader.status()):
+      return
+    self.observer.stop()
+    self.observer.join()
     self.root.quit()
 
 '''
