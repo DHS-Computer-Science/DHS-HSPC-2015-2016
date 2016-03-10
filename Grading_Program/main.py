@@ -10,6 +10,16 @@ from ThreadGrader import ThreadGrader
 from SubmissionWatcher import SubmissionWatcher
 from watchdog.observers import Observer
 import threading
+import tempfile
+import atexit
+import shutil
+
+temp_dir = tempfile.mkdtemp(prefix='grader_staging_')
+
+def cleanup():
+  shutil.rmtree(temp_dir)
+
+atexit.register(cleanup)
 
 def main(args):
   #create a queue
@@ -28,7 +38,8 @@ def main(args):
 
   #file watcher
   observer = Observer()
-  observer.schedule(SubmissionWatcher(cnx,args,q), path=args['submission_dir'])
+  observer.schedule(SubmissionWatcher(cnx, args, q, temp_dir),
+                    path=args['submission_dir'])
   observer.start()
 
   #grader manager
