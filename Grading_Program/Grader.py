@@ -13,7 +13,7 @@ except ImportError:
   DEVNULL = open(os.devnull, 'wb')
 
 class Grader:
-  def __init__(self, path_to_zip, test_dir, num):
+  def __init__(self, submission, test_dir, num):
     #the file that will be compared against
     self.test_output = '{test}/{num:02}/output'.format(test=test_dir, num=num)
     #the input file
@@ -24,10 +24,9 @@ class Grader:
     #location to extract to
     self.submission_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-    #extract files
-    archexract = zipfile.ZipFile(path_to_zip)
-    archexract.extractall(self.submission_dir)
-    archexract.close()
+    #copy dir
+    os.rmdir(self.submission_dir)
+    shutil.copytree(submission, self.submission_dir)
 
     #remove .class files
     for root, dirs, files in os.walk(self.submission_dir):

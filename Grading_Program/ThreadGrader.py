@@ -96,8 +96,12 @@ class ThreadGrader(threading.Thread):
       self.done.append(info)
 
       #delete
-      os.remove(file_name)#original archive(new one is in archive_dir)
       os.remove(info_file)#info file(inside of new archive)
+
+      shutil.rmtree(file_name)#original submission(graded copy is in archive_dir)
+      if os.path.exists(file_name):
+        os.rmdir(file_name)
+
       shutil.rmtree(submission.get_dir())#grading dir(already in new archive)
       if os.path.exists(submission.get_dir()):
         os.rmdir(submission.get_dir())
