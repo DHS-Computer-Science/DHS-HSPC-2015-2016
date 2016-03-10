@@ -12,21 +12,24 @@
 
 ## Problems
 The grader will need both input and output files for testing purposes.
-Here is a partial tree of the proposed directory structure:
-
+Here is a partial tree of the directory structure:
 ```
-Problems/
-├── 1/
+problems_dir/
+├── 01/
 │   ├── input
 │   └── output
-├── 2/
+├── 02/
 │   ├── input
 │   └── output
-├── 3/
+├── -3/
 │   ├── input
 │   └── output
 ...
 ```
+
+- `problems_dir` is defined via the comand line, or the config file
+- input/output files should not have .txt at the end, and are case sensitive
+  - also they use *nix line endings - `\n` (NOT `\r` nor `\r\n`)
 
 ## Instalation
 1. install python3 and pip(on a debian based GNU/Linux distro - like ubuntu).
