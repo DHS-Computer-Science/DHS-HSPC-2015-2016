@@ -104,8 +104,8 @@ class Grader:
   def run(self):
     mycmd = ['java',
              '-classpath',
-             self.main_class[0]),
-             self.main_class[1])]
+             self.main_class[0],
+             self.main_class[1]]
     try:
       with open(self.outfile, 'w') as outfile, \
            open(self.test_input, 'r') as infile:
