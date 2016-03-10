@@ -1,9 +1,16 @@
 import subprocess
+import javalang
 import tempfile
-import zipfile
 import fnmatch
+import shutil
 import time
 import os, re
+
+try:
+  from subprocess import DEVNULL # py3k
+except ImportError:
+  import os
+  DEVNULL = open(os.devnull, 'wb')
 
 class Grader:
   def __init__(self, path_to_zip, test_dir, num):
@@ -36,8 +43,10 @@ class Grader:
     False: didn't
   '''
   def compile(self):
-    mycmd = ['javac', self.main_class]
-    tester = subprocess.Popen(mycmd)
+    mycmd = ['javac',
+             os.path.join(self.main_class[0], self.main_class[1]+'.java')]
+    tester = subprocess.Popen(mycmd,          stdin=subprocess.PIPE,
+                              stdout=DEVNULL, stderr=subprocess.STDOUT)
     while tester.poll() is None:
       time.sleep(1)
     return tester.returncode == 0
@@ -103,15 +112,13 @@ class Grader:
     other: very very bad error
   '''
   def run(self):
-    mycmd = ['java',
-             '-classpath',
-             self.main_class[0]),
-             self.main_class[1])]
+    mycmd = ['java', '-classpath', self.main_class[0], self.main_class[1]]
     try:
       with open(self.outfile, 'w') as outfile, \
            open(self.test_input, 'r') as infile:
         start  = time.time()
-        tester = subprocess.Popen(mycmd, stdin=infile, stdout=outfile)
+        tester = subprocess.Popen(mycmd, stdin=infile,
+                                  stdout=outfile, stderr=DEVNULL)
         while tester.poll() is None:
           if (time.time() - start) > 60:
             tester.kill()

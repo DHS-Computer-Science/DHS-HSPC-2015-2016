@@ -28,9 +28,9 @@ class ThreadGrader(threading.Thread):
       #grabs job from queue
       file_name, info = self.queue.get()
 
-      self.description = '{:-24} {:02} ({:03})'.format(info['team_name'],
-                                                       info['problem_id'],
-                                                       info['attempts'])
+      self.description = '{} {:02} ({:03})'.format(info['team_name'],
+                                                   info['problem_id'],
+                                                   info['attempts'])
 
       submission = Grader(file_name, self.problem_dir, info['problem_id'])
 
@@ -99,12 +99,14 @@ class ThreadGrader(threading.Thread):
       os.remove(file_name)#original archive(new one is in archive_dir)
       os.remove(info_file)#info file(inside of new archive)
       shutil.rmtree(submission.get_dir())#grading dir(already in new archive)
+      if os.path.exists(submission.get_dir()):
+        os.rmdir(submission.get_dir())
 
       self.cursor = self.sql.cursor()
       #updates results into 'graded' column of /table/
       query = 'UPDATE {} SET grade=\'{}\' WHERE submission_name=\'{}\''
       self.cursor.execute(query.format(self.subs_table, result,
-                                       info['submission_name'].decode('utf-8')))
+                                       info['submission_name']))
 
       command = 'notify.sh {} {}'.format(info['problem_id'], info['result'])
 
