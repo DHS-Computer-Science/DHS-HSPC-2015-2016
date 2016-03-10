@@ -35,7 +35,7 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     info = {'attempts':0}
     query = 'SELECT * FROM {} WHERE submission_name = \'{}\''
     while len(info) == 1:
-      self.cursor.execute(query.format(self.table, basename))
+      self.cursor.execute(query.format(self.subs_table, basename))
       time.sleep(2)
       for row in self.cursor:
         info.update(dict(zip(cursor.column_names, row)))
@@ -46,7 +46,7 @@ class SubmissionWatcher(PatternMatchingEventHandler):
       info['team_name'] = row[0]
 
     query = 'SELECT * FROM {}' \
-            'WHERE (problem_id = \'{}\' AND team_id = \'{}\' AND time < \'{}\')"
+            'WHERE (problem_id = \'{}\' AND team_id = \'{}\' AND time < \'{}\')'
     self.cursor.execute(query.format(self.subs_table, info['problem_id'],
                                      info['team_id'], info['time']))
 
