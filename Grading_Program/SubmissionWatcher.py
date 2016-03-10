@@ -47,12 +47,18 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     for row in self.cursor:
       info['team_name'] = row[0]
 
-    query = 'SELECT * FROM {}' \
-            'WHERE (problem_id = \'{}\' AND team_id = \'{}\' AND time < \'{}\')'
+    query = 'SELECT * FROM {} ' \
+            'WHERE problem_id = \'{}\' AND team_id = \'{}\' AND time <= \'{}\''
     self.cursor.execute(query.format(self.subs_table, info['problem_id'],
                                      info['team_id'], info['time']))
 
     info['attempts'] = self.cursor._rowcount+1
+
+    for i in info.keys():
+      try:
+        info[i] = info[i].decode('utf-8')
+      except:
+        pass
 
     self.cursor.close()
     self.queue.put((path_name, info))
