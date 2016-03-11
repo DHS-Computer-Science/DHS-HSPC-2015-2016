@@ -168,7 +168,7 @@ class App:
     elif 'time' in button.lower():
       try:
         tmp = time(self.time_input.get())
-        if self.end > datetime.datetime.now()
+        if self.end > datetime.datetime.now():
           self.end = tmp
       except ValueError:
         print("please go back to 1st grade and learn how to represent time")
