@@ -117,7 +117,8 @@ class ThreadGrader(threading.Thread):
       command = 'notify.sh {} {}'.format(info['problem_id'], info['result'])
 
       if 'submission_ip' in info.keys() and info['submission_ip']:
-        ssh = subprocess.Popen(["ssh", '-i', 'client_rsa',
+        ssh = subprocess.Popen(['ssh', '-i', 'client_rsa', '-o',
+                               'StrictHostKeyChecking=no',
                                'guest@'+info['submission_ip'], command],
                                shell=False,
                                stdout=subprocess.PIPE,

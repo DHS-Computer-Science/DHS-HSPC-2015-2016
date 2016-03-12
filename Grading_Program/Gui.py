@@ -56,7 +56,7 @@ to change width of column drag boundary
     self.tree.delete(*self.tree.get_children())
     for col in self.header:
       self.tree.heading(col, text=col.title(),
-        command=lambda c=col: sortby(self.tree, c, 0))
+        command=lambda c=col: self.sortby(self.tree, c, 0))
       # adjust the column's width to the header string
       self.tree.column(col,
         width=tkFont.Font().measure(col.title()))
@@ -69,7 +69,7 @@ to change width of column drag boundary
         if self.tree.column(self.header[ix],width=None)<col_w:
           self.tree.column(self.header[ix], width=col_w)
 
-  def sortby(tree, col, descending):
+  def sortby(self, tree, col, descending):
     """sort tree contents when a column header is clicked on"""
     # grab values to sort
     data = [(tree.set(child, col), child) \
@@ -132,7 +132,7 @@ class App:
 
     messages = 'Values for result:\n0: not graded\n1: good(complete)\n' \
                '2: formatting error\n3: compile error\n' \
-               '4: no main class found\n5: run time error\n' \
+               '4: no main class found or syntax error\n5: run time error\n' \
                '6: ran for too long\n7: outputs do not match\n' \
                'other: very very bad error\n'
 

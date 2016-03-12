@@ -14,7 +14,7 @@ except ImportError:
 
 def is_text(fn):
   msg = subprocess.Popen(['file', fn, '-b', '--mime'], stdout=subprocess.PIPE).communicate()[0]
-  return 'text' in msg
+  return 'text' in str(msg)
 
 class Grader:
   def __init__(self, submission, test_dir, num, timeout):
@@ -70,14 +70,17 @@ class Grader:
       for file in fnmatch.filter(files, '*.java'):
         if is_text(os.path.join(root, file)):
           with open(os.path.join(root, file), 'r') as f:
-            source = f.read()
-            tree = javalang.parse.parse(source)
-            for klass in tree.types:
-              if isinstance(klass, javalang.tree.ClassDeclaration):
-                for m in klass.methods:
-                  if m.name == 'main' and \
-                     m.modifiers.issuperset({'public', 'static'}):
-                       self.main_class = (root, klass.name)
+            try:
+              source = f.read()
+              tree = javalang.parse.parse(source)
+              for klass in tree.types:
+                if isinstance(klass, javalang.tree.ClassDeclaration):
+                  for m in klass.methods:
+                    if m.name == 'main' and \
+                       m.modifiers.issuperset({'public', 'static'}):
+                         self.main_class = (root, klass.name)
+            except:
+              pass
 
     problem_number = -1 #place holder for errors
     team_id        = -1 #place holder for errors
@@ -112,7 +115,7 @@ class Grader:
     1: good(complete)
     2: formatting error
     3: compile error
-    4: no main class found
+    4: no main class found, or syntax error
     5: run time error
     6: ran for too long
     7: outputs do not match
@@ -127,7 +130,7 @@ class Grader:
         tester = subprocess.Popen(mycmd, stdin=infile,
                                   stdout=outfile, stderr=DEVNULL)
         while tester.poll() is None:
-          if (time.time() - start) > self.timeout:
+          if (time.time() - start) > float(self.timeout):
             tester.kill()
             return 6
           time.sleep(0.5)

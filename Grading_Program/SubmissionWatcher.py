@@ -46,7 +46,7 @@ class SubmissionWatcher(PatternMatchingEventHandler):
     self.cursor.execute(query.format(self.subs_table, info['problem_id'],
                                      info['team_id'], info['time']))
 
-    info['attempts'] = self.cursor._rowcount+1
+    info['attempts'] = self.cursor._rowcount
 
     for i in info.keys():
       try:
