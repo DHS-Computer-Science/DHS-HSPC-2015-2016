@@ -12,6 +12,10 @@ except ImportError:
   import os
   DEVNULL = open(os.devnull, 'wb')
 
+def is_text(fn):
+  msg = subprocess.Popen(['file', fn, '-b', '--mime'], stdout=subprocess.PIPE).communicate()[0]
+  return 'text' in msg
+
 class Grader:
   def __init__(self, submission, test_dir, num, timeout):
     #the file that will be compared against
@@ -64,15 +68,16 @@ class Grader:
     #find main java file
     for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.java'):
-        with open(os.path.join(root, file), 'r') as f:
-          source = f.read()
-          tree = javalang.parse.parse(source)
-          for klass in tree.types:
-            if isinstance(klass, javalang.tree.ClassDeclaration):
-              for m in klass.methods:
-                if m.name == 'main' and \
-                   m.modifiers.issuperset({'public', 'static'}):
-                     self.main_class = (root, klass.name)
+        if is_text(os.path.join(root, file)):
+          with open(os.path.join(root, file), 'r') as f:
+            source = f.read()
+            tree = javalang.parse.parse(source)
+            for klass in tree.types:
+              if isinstance(klass, javalang.tree.ClassDeclaration):
+                for m in klass.methods:
+                  if m.name == 'main' and \
+                     m.modifiers.issuperset({'public', 'static'}):
+                       self.main_class = (root, klass.name)
 
     problem_number = -1 #place holder for errors
     team_id        = -1 #place holder for errors
