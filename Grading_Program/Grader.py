@@ -41,6 +41,7 @@ class Grader:
         os.remove(os.path.join(root, f))
 
     #the java file which will be run
+    self.comp        = 0
     self.main_class  = ''
 
   '''
@@ -49,6 +50,8 @@ class Grader:
     False: didn't
   '''
   def compile(self):
+    if self.comp != 0:
+      return False
     mycmd = ['javac',
              os.path.join(self.main_class[0], self.main_class[1]+'.java')]
     tester = subprocess.Popen(mycmd,          stdin=subprocess.PIPE,
@@ -80,7 +83,8 @@ class Grader:
                        m.modifiers.issuperset({'public', 'static'}):
                          self.main_class = (root, klass.name)
             except:
-              pass
+              self.comp = False
+              return True
 
     problem_number = -1 #place holder for errors
     team_id        = -1 #place holder for errors
