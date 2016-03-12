@@ -13,13 +13,16 @@ except ImportError:
   DEVNULL = open(os.devnull, 'wb')
 
 class Grader:
-  def __init__(self, submission, test_dir, num):
+  def __init__(self, submission, test_dir, num, timeout):
     #the file that will be compared against
     self.test_output = '{test}/{num:02}/output'.format(test=test_dir, num=num)
     #the input file
     self.test_input  = '{test}/{num:02}/input'.format(test=test_dir, num=num)
     #the file where the output will be writen
     self.outfile     = ''
+
+    #set the timeout
+    self.timeout     = timeout
 
     #location to extract to
     self.submission_dir = tempfile.mkdtemp(prefix='grader_staging_')
@@ -119,7 +122,7 @@ class Grader:
         tester = subprocess.Popen(mycmd, stdin=infile,
                                   stdout=outfile, stderr=DEVNULL)
         while tester.poll() is None:
-          if (time.time() - start) > 60:
+          if (time.time() - start) > self.timeout:
             tester.kill()
             return 6
           time.sleep(0.5)

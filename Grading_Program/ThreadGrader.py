@@ -16,6 +16,7 @@ class ThreadGrader(threading.Thread):
     self.subs_table  = args['subs_table']
     self.archive_dir = args['archive_dir']
     self.problem_dir = args['problems_dir']
+    self.timeout     = args['timeout']
     self.sql         = sql
     self.done        = done
     self.description = None
@@ -32,7 +33,8 @@ class ThreadGrader(threading.Thread):
                                                    info['problem_id'],
                                                    info['attempts'])
 
-      submission = Grader(file_name, self.problem_dir, info['problem_id'])
+      submission = Grader(file_name, self.problem_dir,
+                          info['problem_id'], self.timeout)
 
       '''
       Values for result:
