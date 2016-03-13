@@ -11,13 +11,13 @@
   - mysql
 
 ## Installation
-- install them seperatly, or all together with some xampp hack
-- put the files in this dir into the correct dir
-  - I dunno, maybe `/var/www/html` or something
-- get the mysql tables up ¯\_(ツ)_/¯
+- run the install script in this dir (`./install.sh`)
+  on a debian based machine (like a computer running ubuntu)
+  - This only needs to be done once
+- now run the setup script in this dir (`./setup.sh`)
+  - This will need to be run once per competition
 
 ## Running
 - reboot, maybe?
-- start lampp
-  - if you had not used lamp, it should be up already
-- get the tables set up for the teams and submissions
+  - if not running
+- or wait
