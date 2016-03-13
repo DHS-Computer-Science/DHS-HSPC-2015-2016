@@ -16,7 +16,7 @@
 1. start it up, run the `.vmdk` files with VMPlayer
   - you will be logged in automaticaly(as guest)
 2. open the konsole `Ctrl+Alt+T`
-3. run the command ` su az` (yes with a space) and type the password in
+3. run the command `su az` (with a space before su) and type the password in
   - should be `zasypkin`
 4. be sure that the submission server is up, and take note of its IP
    address(run `ifconfig` on the server)
@@ -41,10 +41,13 @@
 - eclipse is an IDE, it does this for you, look it up
 - others will need a command line
 - compiling
-  - run `javac FILE.java` in the command line
-    (must be in the same dir as FILE.java)
+  - open the console
+  - use `cd dirname` to change to the directory with your java files
+    - use `ls` to list the files and other directories in the current directory
+  - run `javac Name.java` in the command line
+    (must be in the same dir as Name.java)
 - running
-  - run `java FILE` in the command line - NO EXTENSION, just the class name
-    (must be in the same dir as FILE.class)
+  - run `java Name` in the command line - NO EXTENSION, just the class name
+    (must be in the same dir as Name.class)
   - you can pipe input/output to/from a text file into std in/out like so
-    `java FILE < in_file > out_file`
+    `java Name < in_file > out_file`
