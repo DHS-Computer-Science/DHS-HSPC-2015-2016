@@ -41,7 +41,7 @@ for (\$i = 0; \$i < 16; \$i++) {
     VALUES ('\$username', '\$teampass')\";
 
 // Display the password, salt, hash, and the teampass
-echo \"Username: \".\$username.\"\\nPassword: \".\$password.\"\\nSalt: \".\$salt.\"\\nHash: \".\$hash.\"\\nTeampass: \".\$teampass;
+echo \"Username: \".\$username.\"\\nPassword: \".\$password;
 // Display a status message
 if (\$conn->query(\$sql) == TRUE) {
   echo \"\\nUser added\\n\\n\";

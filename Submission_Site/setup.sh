@@ -6,8 +6,9 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 echo Copying files
-rm `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'`/index.html
-cp *php *css api `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r
+rm `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'`/* 2> /dev/null
+cp htdocs/* `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r
+chmod o+rX `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r
 
 printf "Please enter the mysql password for root (or leave blank for default): "
 
@@ -38,7 +39,7 @@ use hspc;
 CREATE TABLE hspc.teams (
   team_id INT NOT NULL,
   team_name VARCHAR(45) NULL,
-  team_password VARCHAR(45) NULL,
+  team_password VARCHAR(60) NULL,
   PRIMARY KEY (team_id));
 
 CREATE TABLE hspc.submissions (
@@ -52,4 +53,5 @@ CREATE TABLE hspc.submissions (
   PRIMARY KEY (submission_id));
 EOF
 
+echo to set up accounts, run \`./create_teams.sh\` in the command line
 #echo To setup user accounts, please navigate to http://www.localhost/createaccount.php
