@@ -53,7 +53,8 @@ class Grader:
     if self.comp != 0:
       return False
     mycmd = ['javac',
-             os.path.join(self.main_class[0], self.main_class[1]+'.java')]
+             os.path.join(self.main_class[0], self.main_class[1]+'.java'),
+             '-cp', self.main_class[0]]
     tester = subprocess.Popen(mycmd,          stdin=subprocess.PIPE,
                               stdout=DEVNULL, stderr=subprocess.STDOUT)
     while tester.poll() is None:
