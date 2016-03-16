@@ -2,6 +2,13 @@
 
 ## Contributors
 - Andriy Zasypkin
+- Possibly someone else
+
+## Notes
+- This product is broken(a joke), be advised. It will need testing in
+  competition like circumstances; In fact it is recomended to fully
+  scrap this project, and restart from the begginig.
+- You have been warned, should you wish to continue, read on.
 
 ## Specifications
 - Runs Kubuntu 14.04
@@ -9,7 +16,8 @@
   - step 3-6, in the *Running* catagory open one ip(to the submission server)
 
 ## Installation
-- Use VMPlayer, VirtualBox will need a [hack](http://stackoverflow.com/questions/5906441/how-to-ssh-to-a-virtualbox-guest-externally-through-a-host) and a code change
+- Use VMPlayer
+  - VirtualBox(not VMPlayer) will need a [hack](http://stackoverflow.com/questions/5906441/how-to-ssh-to-a-virtualbox-guest-externally-through-a-host) and a code change
 - That's it
 
 ## Running

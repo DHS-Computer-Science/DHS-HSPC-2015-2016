@@ -7,8 +7,8 @@ fi
 
 echo Copying files
 rm `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'`/* 2> /dev/null
-cp htdocs/* `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r
-chmod o+rX `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r
+cp htdocs/* `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -r -u
+chmod o+rX `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'` -R
 
 printf "Please enter the mysql password for root (or leave blank for default): "
 
@@ -20,13 +20,14 @@ fi
 
 if mysql -u root -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$pass');" > /dev/null 2>&1 ; then
   # all is good, password is set
-  echo -n
+  echo -n #place holder
 elif ! mysql -u root -p"$pass" -e ";" > /dev/null 2>&1; then
   if mysql -u root -ppassword -e ";" > /dev/null 2>&1; then
     mysql -u root -ppassword -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$pass');" > /dev/null 2>&1
+  else
+    echo mysql password incorrect, maybe try the default one?
+    exit
   fi
-  echo mysql password incorrect, maybe try the default one?
-  exit
 fi
 
 echo Creating database and tables
@@ -53,5 +54,9 @@ CREATE TABLE hspc.submissions (
   PRIMARY KEY (submission_id));
 EOF
 
+echo
 echo to set up accounts, run \`./create_teams.sh\` in the command line
+echo
+echo
+echo Also make sure to change the timestamp in the `cat /etc/apache2/sites-enabled/* | grep -Eo '[^ ]+var/www.*'`/hspc/scoreboard.php file on line 147\(I think\)
 #echo To setup user accounts, please navigate to http://www.localhost/createaccount.php
