@@ -11,7 +11,7 @@ except:
   import Tkinter.font as tkFont
   from Tkinter.ttk import *
 
-def time(s):
+def time(s):#this was defined somewhere already
   if re.search('^\\d\\d:\\d\\d$', s):
     return datetime.datetime.strptime(datetime.date.today().isoformat()+s+':00',
                              '%Y-%m-%d%H:%M:%S')
@@ -21,6 +21,9 @@ def time(s):
 
 class MultiColumnListbox(Frame):
   """use a TreeView as a multicolumn ListBox"""
+  #Preface:
+  #  do NOT edit this class,
+  #  or ANYTHING related to this class
 
   def __init__(self, root, header):
     Frame.__init__(self, root)
@@ -103,30 +106,38 @@ class App:
     self.mainframe.rowconfigure(0, weight=1)
 
     header = ['Team Name', 'Problem Number', 'Attempt', 'Grade']
+
+    #table of queued submissions(should be empty most of the time(mysql)
     self.queue_table = MultiColumnListbox(self.mainframe, header[:3])
     self.queue_table.grid(row=1, column=0, rowspan=5)
 
+    #table of things that are done
     self.done_table = MultiColumnListbox(self.mainframe, header)
     self.done_table.grid(row=1, column=4, rowspan=5)
 
+    #button that kills everything, or something like that
     self.btn1 = Button(self.mainframe, text="Stop",
                        command=lambda: self.clicked('stop'))
     self.btn1.grid(row=6, column=4)
 
+    #that thing that says how much time is left
     self.timer_text  = StringVar()
     self.timer_text.set('Time Remaining: 00:00:00')
     self.timer_label = Label(self.mainframe, textvariable=self.timer_text)
     self.timer_label.grid(row=0, column=1, columnspan=3)
 
+    #for your viewing pleasure
     self.separator1 = Separator(self.mainframe, orient='horizontal')
     self.separator1.grid(row=2, column=3, sticky='ew')
 
+    #the place where the things that get graded appear
     self.grader_text  = StringVar()
     self.grader_text.set('Waiting')
     self.grader_label = Label(self.mainframe, width=25, anchor='center',
                               textvariable=self.grader_text)
     self.grader_label.grid(row=3, column=3)
 
+    #for your viewing pleasure
     self.separator2 = Separator(self.mainframe, orient='horizontal')
     self.separator2.grid(row=4, column=3, sticky='ew')
 
@@ -136,9 +147,12 @@ class App:
                '6: ran for too long\n7: outputs do not match\n' \
                'other: very very bad error\n'
 
+    #key for humans to understand grades
     self.grade_values = Label(self.mainframe, anchor='center', text=messages)
     self.grade_values.grid(row=5, column=3)
 
+    #humans be human, in case SOMEONE tells you that the competition will
+    #  go into overtime, use this
     self.time_frame = Frame(self.mainframe)
     self.time_frame.grid(row=6, column=0)
     self.time_input = StringVar()
@@ -148,11 +162,12 @@ class App:
     self.time_entry =Entry(self.time_frame,width=8,textvariable=self.time_input)
     self.time_entry.grid(row=0, column=0)
 
+    #the button in case someone tells you that you have to be here longer
     self.btn2 = Button(self.time_frame, text="Set End Time",
                        command=lambda: self.clicked('time'))
     self.btn2.grid(row=0, column=1)
 
-    self.update()
+    self.update()#should trigger constant updates, until the end of time
 
   def entry_selectall(self, event):
     event.widget.select_range(0, END)
@@ -170,7 +185,7 @@ class App:
         tmp = time(self.time_input.get())
         if self.end > datetime.datetime.now():
           self.end = tmp
-      except ValueError:
+      except ValueError:#we learn time in 1st grade, right?
         print("please go back to 1st grade and learn how to represent time")
     self.update()
 
@@ -187,9 +202,9 @@ class App:
       h = 0
       m = 0
       s = 0
-      self.observer.stop()
+      self.observer.stop()#if time has ended(the end is here), stop
       self.observer.join()
-    else:
+    else:#it seems humans deal better with time when it's-a split up
       sec = (self.end - datetime.datetime.now()).seconds
       h   = int(sec / 3600)
       m   = int(sec / 60) % 60
@@ -202,18 +217,19 @@ class App:
     else:
       self.grader_text.set('Waiting')
 
-    self.root.after(500, self.update)
+    self.root.after(500, self.update)#update again after half-a asecond
 
-  def mainloop(self):
+  def mainloop(self):#run forest, run!
     self.root.mainloop()
 
-  def quit(self):
+  def quit(self):#kill stuff
     if not self.queue.empty() or (self.grader and self.grader.status()):
       return
     self.observer.stop()
     self.observer.join()
     self.root.quit()
 
+#This is here to test the gui, should remain commented
 '''
 obs = None
 q = queue.Queue()

@@ -10,10 +10,11 @@ try:
   from subprocess import DEVNULL # py3k
 except ImportError:
   import os
-  DEVNULL = open(os.devnull, 'wb')
+  DEVNULL = open(os.devnull, 'wb') #/dev/null - a magical place
 
-def is_text(fn):
-  msg = subprocess.Popen(['file', fn, '-b', '--mime'], stdout=subprocess.PIPE).communicate()[0]
+def is_text(fn):#possibly the only compatibility issue - needs linux
+  msg = subprocess.Popen(['file', fn, '-b', '--mime'],
+                         stdout=subprocess.PIPE).communicate()[0]
   return 'text' in str(msg)
 
 class Grader:
@@ -22,17 +23,17 @@ class Grader:
     self.test_output = '{test}/{num:02}/output'.format(test=test_dir, num=num)
     #the input file
     self.test_input  = '{test}/{num:02}/input'.format(test=test_dir, num=num)
-    #the file where the output will be writen
+    #the file where the output will be writen(TBD)
     self.outfile     = ''
 
-    #set the timeout
+    #set the timeout(as a string for now)
     self.timeout     = timeout
 
-    #location to extract to
+    #location to extract to(a dir)
     self.submission_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-    #copy dir
-    os.rmdir(self.submission_dir)
+    #copy dir to that place that was created one(or two) line(s) above
+    os.rmdir(self.submission_dir)#leave this line here
     shutil.copytree(submission, self.submission_dir)
 
     #remove .class files
@@ -41,8 +42,9 @@ class Grader:
         os.remove(os.path.join(root, f))
 
     #the java file which will be run
-    self.comp        = 0
-    self.main_class  = ''
+    self.comp        = 0  #This is a hack - leave it here
+                          # although it may not work in some cases
+    self.main_class  = '' #TBA
 
   '''
   outputs:
@@ -50,16 +52,16 @@ class Grader:
     False: didn't
   '''
   def compile(self):
-    if self.comp != 0:
+    if self.comp != 0:#this is the hack mentioned previously
       return False
     mycmd = ['javac',
              os.path.join(self.main_class[0], self.main_class[1]+'.java'),
-             '-cp', self.main_class[0]]
+             '-cp', self.main_class[0]] #command to compile file w/ main method
     tester = subprocess.Popen(mycmd,          stdin=subprocess.PIPE,
-                              stdout=DEVNULL, stderr=subprocess.STDOUT)
-    while tester.poll() is None:
+                              stdout=DEVNULL, stderr=subprocess.STDOUT)#compile
+    while tester.poll() is None:  #wait for end
       time.sleep(1)
-    return tester.returncode == 0
+    return tester.returncode == 0 #check exit status and return
 
   '''
   outputs:
@@ -69,7 +71,7 @@ class Grader:
   def extract_info(self):
     self.outfile = os.path.join(self.submission_dir, 'output')
 
-    #find main java file
+    #find main java file using javalang(copy/pasted and merged from internets)
     for root, dirs, files in os.walk(self.submission_dir):
       for file in fnmatch.filter(files, '*.java'):
         if is_text(os.path.join(root, file)):
@@ -84,11 +86,12 @@ class Grader:
                        m.modifiers.issuperset({'public', 'static'}):
                          self.main_class = (root, klass.name)
             except:
-              self.comp = False
+              self.comp = False # I think this is part of some last minute hack
               return True
 
-    problem_number = -1 #place holder for errors
-    team_id        = -1 #place holder for errors
+    problem_number = -1 #place holder for errors - should NEVER be used
+    team_id        = -1 #place holder for errors - should NEVER be used
+                        # it should be safe to remove these lines
 
     return self.main_class != ''
 
@@ -97,12 +100,12 @@ class Grader:
     True:  good
     False: baad
   '''
-  def compare(self):
+  def compare(self):#if it works, don't touch
     status = 7
     with open(self.outfile, 'r') as user, \
          open(self.test_output, 'r') as test:
-      u_out   = user.read().replace('\r', '\r')
-      correct = test.read().replace('\r', '\r')
+      u_out   = user.read().replace('\r', '')
+      correct = test.read().replace('\r', '')
 
     if u_out == correct:
       status = 1
@@ -126,7 +129,7 @@ class Grader:
     7: outputs do not match
     other: very very bad error
   '''
-  def run(self):
+  def run(self):#if it works, don't touch
     mycmd = ['java', '-classpath', self.main_class[0], self.main_class[1]]
     try:
       with open(self.outfile, 'w') as outfile, \
@@ -145,7 +148,7 @@ class Grader:
         return self.compare() #change it if you don't like it
     except IOError as e:
       #Should not happen, I think
-      #Note I should watch my language in school related projects
+      #Note: I should watch my language in school related projects
       #  but then again, who's gonna read this?
       print('Error: {}'.format(e.strerror))
       return 9999

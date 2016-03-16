@@ -14,19 +14,20 @@ import tempfile
 import atexit
 import shutil
 
+#this may not do anything
 temp_dir = tempfile.mkdtemp(prefix='grader_staging_')
 
-def cleanup():
+def cleanup():#delete the thing that may not do anything, at exit
   shutil.rmtree(temp_dir)
 
-atexit.register(cleanup)
+atexit.register(cleanup)#be 100% sure it will be deleted
 
 def main(args):
-  #create a queue
+  #create a queue for the subs to be processed
   q = queue.Queue()
-  done = []
+  done = []#list of things graded
 
-  #connect to mysql server
+  #connect to mysql server - I should'a used pymysql
   conf = {
     'user'    : args['username'],
     'password': args['password'],
@@ -34,26 +35,26 @@ def main(args):
     'database': args['database'],
     'buffered': True
   }
-  cnx = mysql.connector.connect(**conf)
+  cnx = mysql.connector.connect(**conf)#magic(connecting)
 
-  #file watcher
+  #file watcher, wait for the webserver to put subs on disk
   observer = Observer()
   observer.schedule(SubmissionWatcher(cnx, args, q, temp_dir),
                     path=args['submission_dir'])
   observer.start()
 
-  #grader manager
+  #grader manager, when queue is not working - grades stuff
   grade_manager = ThreadGrader(q, cnx, done, args)
   grade_manager.setDaemon(True) #do not exit until all things needed
-  grade_manager.start()         #  to be graded are graded, and start it
+  grade_manager.start()         #  to be graded are graded; and start it
 
-  #instatiate/start GUI
+  #instatiate/start GUI - since some people find the commandline not pretty/hard
   app = App(observer, q, done, args['end_time'], grade_manager)
-  app.mainloop()
+  app.mainloop()#start the gui
 
-  #close mysql
+  #close mysql, when the gui exits
   cnx.close()
 
-  #end watchdog - stop watching files apear in submission dir
+  #end watchdog - stop watching files appear in submission dir
   observer.stop()
   observer.join()

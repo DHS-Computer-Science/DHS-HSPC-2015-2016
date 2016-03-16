@@ -54,8 +54,9 @@ do {
 
 	// Assign variables regarding the file information
 	$sub_dir = join_paths($target_dir . $filename);
+	$result = mysql_query("SELECT * FROM submissions WHERE submission_name='$sub_dir' LIMIT 1");
 
-} while (file_exists($sub_dir));// works for dirs as well
+} while (mysql_fetch_array($result) !== false);// works for dirs as well
 
 // File settings
 $uploadOk = 1;
